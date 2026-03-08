@@ -305,7 +305,7 @@ gap: 10px;
 padding: 4px 20px 10px;
 }
 .divider-label::before, .divider-label::after {
-content: ‘’;
+content: '';
 flex: 1;
 height: 1px;
 background: var(--border);
@@ -370,7 +370,7 @@ font-family: var(--sans);
 outline: none;
 -webkit-appearance: none;
 padding-right: 20px;
-background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%238a7968’/%3E%3C/svg%3E”);
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a7968'/%3E%3C/svg%3E");
 background-repeat: no-repeat;
 background-position: right 6px center;
 }
@@ -635,7 +635,7 @@ line-height: 1.4;
 }
 
 .panel-tips li::before {
-content: ‘→’;
+content: '→';
 position: absolute;
 left: 0;
 color: var(--accent);
@@ -1421,18 +1421,18 @@ showPanel();
 }
 
 function showPanel() {
-document.getElementById(‘overlay’).classList.add(‘open’);
-document.getElementById(‘panel’).classList.add(‘open’);
+document.getElementById('overlay').classList.add('open');
+document.getElementById('panel').classList.add('open');
 }
 
 function closePanel() {
-document.getElementById(‘overlay’).classList.remove(‘open’);
-document.getElementById(‘panel’).classList.remove(‘open’);
+document.getElementById('overlay').classList.remove('open');
+document.getElementById('panel').classList.remove('open');
 }
 
 // ── IMPORT PANEL ──
 function showImportPanel() {
-var content = document.getElementById(‘panel-content’);
+var content = document.getElementById('panel-content');
 if (!content) return;
 
 var lastExport = lsGet('japan_last_export', null);
@@ -1503,40 +1503,40 @@ showPanel();
 
 // ── RESEARCH PANEL ──
 function showResearchPanel() {
-var content = document.getElementById(‘panel-content’);
+var content = document.getElementById('panel-content');
 if (!content) return;
 content.innerHTML =
-‘<div class="panel-name">📖 Deep Dive</div>’ +
-‘<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 16px;">Comprehensive offline guides — neighbourhoods, transport, food culture, customs, and seasonal tips.</p>’ +
-[‘Tokyo’, ‘Kyoto’, ‘Osaka’].map(function(c) {
-return ‘<div class="research-card"><h3>’ + c + ‘</h3>’ +
-‘<p>Neighbourhoods · Transport · Customs · Food culture · Seasonal tips · Etiquette</p></div>’;
-}).join(’’) +
-‘<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;text-align:center;">Full research content will be loaded here once Claude generates it.</p>’;
+'<div class="panel-name">📖 Deep Dive</div>' +
+'<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 16px;">Comprehensive offline guides — neighbourhoods, transport, food culture, customs, and seasonal tips.</p>' +
+['Tokyo', 'Kyoto', 'Osaka'].map(function(c) {
+return '<div class="research-card"><h3>' + c + '</h3>' +
+'<p>Neighbourhoods · Transport · Customs · Food culture · Seasonal tips · Etiquette</p></div>';
+}).join('') +
+'<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;text-align:center;">Full research content will be loaded here once Claude generates it.</p>';
 showPanel();
 }
 
 // ── SHOW RESPONSE ──
 function showResponse(html) {
-var box = document.getElementById(‘response-box’);
-var text = document.getElementById(‘response-text’);
+var box = document.getElementById('response-box');
+var text = document.getElementById('response-text');
 if (!box || !text) return;
 text.innerHTML = html;
-box.style.display = ‘block’;
+box.style.display = 'block';
 }
 
 // ── EVENT LISTENERS ──
 // City tabs
-document.getElementById(‘city-tabs’).addEventListener(‘click’, function(e) {
-var tab = e.target.closest(’.city-tab’);
+document.getElementById('city-tabs').addEventListener('click', function(e) {
+var tab = e.target.closest('.city-tab');
 if (!tab) return;
 state.city = tab.dataset.city;
-document.querySelectorAll(’.city-tab’).forEach(function(t) { t.classList.remove(‘active’); });
-tab.classList.add(‘active’);
-var titleEl = document.getElementById(‘section-title’);
-if (titleEl) titleEl.textContent = state.city === ‘all’ ? ‘All Cities’ : state.city.charAt(0).toUpperCase() + state.city.slice(1);
+document.querySelectorAll('.city-tab').forEach(function(t) { t.classList.remove('active'); });
+tab.classList.add('active');
+var titleEl = document.getElementById('section-title');
+if (titleEl) titleEl.textContent = state.city === 'all' ? 'All Cities' : state.city.charAt(0).toUpperCase() + state.city.slice(1);
 renderCards();
-if (mapInstance && document.getElementById(‘map-view’).classList.contains(‘active’)) {
+if (mapInstance && document.getElementById('map-view').classList.contains('active')) {
 var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
 mapInstance.flyTo(centre, 14, { duration: 1 });
 renderMapPins();
@@ -1544,74 +1544,74 @@ renderMapPins();
 });
 
 // Category pills
-document.getElementById(‘cat-strip’).addEventListener(‘click’, function(e) {
-var pill = e.target.closest(’.cat-pill’);
+document.getElementById('cat-strip').addEventListener('click', function(e) {
+var pill = e.target.closest('.cat-pill');
 if (!pill) return;
 state.cat = pill.dataset.cat;
-document.querySelectorAll(’.cat-pill’).forEach(function(p) { p.classList.remove(‘active’); });
-pill.classList.add(‘active’);
+document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+pill.classList.add('active');
 renderCards();
 });
 
 // Search
-document.getElementById(‘search-input’).addEventListener(‘input’, function() {
+document.getElementById('search-input').addEventListener('input', function() {
 state.search = this.value;
 renderCards();
 });
 
 // Sort
-document.getElementById(‘sort-select’).addEventListener(‘change’, function() {
+document.getElementById('sort-select').addEventListener('change', function() {
 state.sort = this.value;
 renderCards();
 });
 
 // Ask chips
-document.getElementById(‘ask-prompts’).addEventListener(‘click’, function(e) {
-var chip = e.target.closest(’.ask-chip’);
+document.getElementById('ask-prompts').addEventListener('click', function(e) {
+var chip = e.target.closest('.ask-chip');
 if (!chip) return;
 var q = chip.dataset.q.toLowerCase();
-document.getElementById(‘ask-input’).value = chip.dataset.q;
-var match = responses[q] || ‘With your full places list loaded, I'd suggest the best option based on your location and what's open now.’;
+document.getElementById('ask-input').value = chip.dataset.q;
+var match = responses[q] || 'With your full places list loaded, I\'d suggest the best option based on your location and what\'s open now.';
 showResponse(match);
 });
 
 // Ask send
-document.getElementById(‘ask-send’).addEventListener(‘click’, function() {
-var q = document.getElementById(‘ask-input’).value.toLowerCase().trim();
+document.getElementById('ask-send').addEventListener('click', function() {
+var q = document.getElementById('ask-input').value.toLowerCase().trim();
 if (!q) return;
 var match = null;
 var keys = Object.keys(responses);
 for (var i = 0; i < keys.length; i++) {
-var words = keys[i].split(’ ’);
+var words = keys[i].split(' ');
 for (var j = 0; j < words.length; j++) {
 if (q.indexOf(words[j]) !== -1 && words[j].length > 3) { match = responses[keys[i]]; break; }
 }
 if (match) break;
 }
-showResponse(match || ‘With your full research and places list loaded, I'd give a personalised answer based on your exact location, the time, and what's on your list. This is a prototype — the full version is Claude-powered.’);
+showResponse(match || 'With your full research and places list loaded, I\'d give a personalised answer based on your exact location, the time, and what\'s on your list. This is a prototype \u2014 the full version is Claude-powered.');
 });
 
 // Ask input enter key
-document.getElementById(‘ask-input’).addEventListener(‘keydown’, function(e) {
-if (e.key === ‘Enter’) document.getElementById(‘ask-send’).click();
+document.getElementById('ask-input').addEventListener('keydown', function(e) {
+if (e.key === 'Enter') document.getElementById('ask-send').click();
 });
 
 // Close response
-document.getElementById(‘close-resp’).addEventListener(‘click’, function() {
-document.getElementById(‘response-box’).style.display = ‘none’;
+document.getElementById('close-resp').addEventListener('click', function() {
+document.getElementById('response-box').style.display = 'none';
 });
 
 // Overlay and X button close
-document.getElementById(‘overlay’).addEventListener(‘click’, closePanel);
-document.getElementById(‘panel-close’).addEventListener(‘click’, closePanel);
+document.getElementById('overlay').addEventListener('click', closePanel);
+document.getElementById('panel-close').addEventListener('click', closePanel);
 
 // Swipe down to close panel
-var panelEl = document.getElementById(‘panel’);
+var panelEl = document.getElementById('panel');
 var swipeStartY = 0;
-panelEl.addEventListener(‘touchstart’, function(e) {
+panelEl.addEventListener('touchstart', function(e) {
 swipeStartY = e.touches[0].clientY;
 }, { passive: true });
-panelEl.addEventListener(‘touchend’, function(e) {
+panelEl.addEventListener('touchend', function(e) {
 var dy = e.changedTouches[0].clientY - swipeStartY;
 if (dy > 80) closePanel();
 }, { passive: true });
@@ -1619,15 +1619,15 @@ if (dy > 80) closePanel();
 var mapOpen = false;
 
 function setExploreBtn(isMap) {
-var btn = document.querySelector(’.nav-item[data-tab=“explore”]’);
+var btn = document.querySelector('.nav-item[data-tab="explore"]');
 if (!btn) return;
-btn.querySelector(’.nav-icon’).textContent  = isMap ? ‘☰’ : ‘🗺’;
-btn.querySelector(’.nav-label’).textContent = isMap ? ‘Browse’ : ‘Explore’;
+btn.querySelector('.nav-icon').textContent  = isMap ? '☰' : '🗺';
+btn.querySelector('.nav-label').textContent = isMap ? 'Browse' : 'Explore';
 }
 
 // Bottom nav
-document.getElementById(‘bottom-nav’).addEventListener(‘click’, function(e) {
-var btn = e.target.closest(’.nav-item’);
+document.getElementById('bottom-nav').addEventListener('click', function(e) {
+var btn = e.target.closest('.nav-item');
 if (!btn) return;
 var tab = btn.dataset.tab;
 
@@ -1685,17 +1685,17 @@ else if (tab === 'saved') { hideMapView();
 });
 
 // Map category strip
-document.getElementById(‘map-cat-strip’).addEventListener(‘click’, function(e) {
-var pill = e.target.closest(’.map-cat-pill’);
+document.getElementById('map-cat-strip').addEventListener('click', function(e) {
+var pill = e.target.closest('.map-cat-pill');
 if (!pill) return;
 mapCat = pill.dataset.cat;
-document.querySelectorAll(’.map-cat-pill’).forEach(function(p) { p.classList.remove(‘active’); });
-pill.classList.add(‘active’);
+document.querySelectorAll('.map-cat-pill').forEach(function(p) { p.classList.remove('active'); });
+pill.classList.add('active');
 renderMapPins();
 });
 
 // City tab changes should also update map if open
-var origCityHandler = document.getElementById(‘city-tabs’).onclick;
+var origCityHandler = document.getElementById('city-tabs').onclick;
 
 // ── INIT ──
 requestLocation();
