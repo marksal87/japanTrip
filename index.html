@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Japan — Travel Companion</title>
@@ -389,7 +389,7 @@ padding: 0 20px;
 display: flex;
 flex-direction: column;
 gap: 10px;
-padding-bottom: 100px;
+padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
 .place-card {
@@ -503,7 +503,7 @@ max-width: 430px;
 background: var(–paper);
 border-top: 1px solid var(–border);
 display: flex;
-padding: 8px 0 env(safe-area-inset-bottom, 16px);
+padding: 8px 0 max(env(safe-area-inset-bottom, 0px) + 8px, 16px);
 z-index: 100;
 }
 
@@ -958,7 +958,7 @@ body.map-open { overflow: hidden; }
 </div>
 
 <script>
-(function() {
+document.addEventListener("DOMContentLoaded", function() {
   // ── DATA ──
   var places = [
     {
@@ -1706,7 +1706,7 @@ var origCityHandler = document.getElementById(‘city-tabs’).onclick;
 requestLocation();
 renderCards();
 
-})();
+});
 </script>
 
 </body>
