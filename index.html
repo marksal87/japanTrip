@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Japan — Travel Companion</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --warm-mid: #c4a882;
+    --accent: #c0392b;
+    --accent-soft: #e8d5c4;
+    --muted: #8a7968;
+    --card: #faf7f2;
+    --border: rgba(100,80,60,0.15);
+    --shadow: 0 2px 12px rgba(30,20,10,0.08);
+    --serif: Georgia, 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+font-family: var(–sans);
+background: var(–paper);
+color: var(–ink);
+min-height: 100vh;
+max-width: 430px;
+margin: 0 auto;
+position: relative;
+overflow-x: hidden;
+}
+
+/* HEADER */
+.app-header {
+position: sticky;
+top: 0;
+z-index: 100;
+background: var(–paper);
+border-bottom: 1px solid var(–border);
+padding: 14px 20px 10px;
+}
+
+.header-top {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 12px;
+}
+
+.app-title {
+font-family: var(–serif);
+font-size: 22px;
+font-weight: 700;
+line-height: 1;
+}
+
+.app-title span {
+display: block;
+font-size: 10px;
+font-family: var(–sans);
+font-weight: 400;
+letter-spacing: 2.5px;
+text-transform: uppercase;
+color: var(–muted);
+margin-top: 4px;
+}
+
+.header-meta {
+text-align: right;
+font-size: 11px;
+color: var(–muted);
+line-height: 1.5;
+}
+
+.header-meta strong {
+display: block;
+color: var(–ink);
+font-weight: 600;
+font-size: 12px;
+}
+
+.city-tabs {
+display: flex;
+gap: 4px;
+}
+
+.city-tab {
+flex: 1;
+padding: 7px 4px;
+border: 1px solid var(–border);
+background: transparent;
+border-radius: 6px;
+font-family: var(–sans);
+font-size: 12px;
+font-weight: 500;
+color: var(–muted);
+cursor: pointer;
+transition: all 0.2s;
+text-align: center;
+}
+
+.city-tab.active {
+background: var(–ink);
+color: var(–paper);
+border-color: var(–ink);
+}
+
+/* SEARCH */
+.search-bar {
+padding: 10px 20px;
+position: relative;
+}
+
+.search-input {
+width: 100%;
+padding: 11px 16px 11px 40px;
+border: 1px solid var(–border);
+border-radius: 10px;
+background: var(–card);
+font-family: var(–sans);
+font-size: 15px;
+color: var(–ink);
+outline: none;
+-webkit-appearance: none;
+}
+
+.search-input:focus { border-color: var(–warm-mid); }
+.search-input::placeholder { color: var(–muted); }
+
+.search-icon {
+position: absolute;
+left: 33px;
+top: 50%;
+transform: translateY(-50%);
+color: var(–muted);
+font-size: 15px;
+pointer-events: none;
+}
+
+/* ASK BAR */
+.ask-bar {
+margin: 0 20px 14px;
+border: 1px solid var(–warm-mid);
+border-radius: 10px;
+background: #fdf8f2;
+overflow: hidden;
+}
+
+.ask-bar-header {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 10px 14px 6px;
+}
+
+.ask-dot {
+width: 7px; height: 7px;
+background: var(–accent);
+border-radius: 50%;
+flex-shrink: 0;
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.ask-label {
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+font-weight: 500;
+}
+
+.ask-prompts {
+display: flex;
+gap: 6px;
+padding: 0 14px 10px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.ask-prompts::-webkit-scrollbar { display: none; }
+
+.ask-chip {
+flex-shrink: 0;
+padding: 6px 11px;
+border: 1px solid var(–warm-mid);
+border-radius: 20px;
+font-size: 12px;
+color: var(–ink);
+background: white;
+cursor: pointer;
+white-space: nowrap;
+font-family: var(–sans);
+}
+
+.ask-input-row {
+display: flex;
+border-top: 1px solid var(–border);
+}
+
+.ask-text-input {
+flex: 1;
+padding: 10px 14px;
+border: none;
+background: transparent;
+font-family: var(–sans);
+font-size: 14px;
+color: var(–ink);
+outline: none;
+-webkit-appearance: none;
+}
+.ask-text-input::placeholder { color: var(–muted); }
+
+.ask-send {
+padding: 8px 16px;
+background: var(–ink);
+border: none;
+color: var(–paper);
+font-size: 18px;
+cursor: pointer;
+font-family: var(–sans);
+}
+
+/* RESPONSE BOX */
+.response-box {
+display: none;
+margin: 0 20px 14px;
+background: var(–card);
+border: 1px solid var(–warm-mid);
+border-radius: 10px;
+padding: 12px 36px 12px 14px;
+font-size: 13px;
+line-height: 1.6;
+color: var(–ink);
+position: relative;
+}
+
+.close-resp {
+position: absolute;
+top: 8px; right: 10px;
+background: none; border: none;
+color: var(–muted); font-size: 18px; cursor: pointer;
+line-height: 1;
+padding: 2px 4px;
+}
+
+.response-label {
+font-size: 10px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(–warm-mid);
+font-weight: 600;
+margin-bottom: 6px;
+}
+
+/* CATEGORY PILLS */
+.cat-strip {
+padding: 0 20px 14px;
+display: flex;
+gap: 6px;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.cat-strip::-webkit-scrollbar { display: none; }
+
+.cat-pill {
+flex-shrink: 0;
+display: flex;
+align-items: center;
+gap: 5px;
+padding: 6px 12px;
+border-radius: 20px;
+border: 1px solid var(–border);
+background: var(–card);
+font-size: 12px;
+font-weight: 500;
+color: var(–muted);
+cursor: pointer;
+font-family: var(–sans);
+white-space: nowrap;
+}
+
+.cat-pill.active {
+background: var(–ink);
+color: var(–paper);
+border-color: var(–ink);
+}
+
+/* NEARBY STRIP */
+.divider-label {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 4px 20px 10px;
+}
+.divider-label::before, .divider-label::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: var(–border);
+}
+.divider-label span {
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+white-space: nowrap;
+}
+
+.nearby-strip {
+padding: 0 0 14px 20px;
+overflow-x: auto;
+display: flex;
+gap: 10px;
+scrollbar-width: none;
+}
+.nearby-strip::-webkit-scrollbar { display: none; }
+
+.nearby-card {
+flex-shrink: 0;
+width: 148px;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 12px;
+cursor: pointer;
+box-shadow: var(–shadow);
+}
+
+.nearby-icon { font-size: 22px; margin-bottom: 6px; }
+.nearby-name {
+font-family: var(–serif);
+font-size: 13px;
+font-weight: 700;
+line-height: 1.3;
+margin-bottom: 4px;
+}
+.nearby-dist { font-size: 11px; color: var(–accent); font-weight: 600; }
+.nearby-type { font-size: 10px; color: var(–muted); margin-top: 2px; }
+
+/* SORT BAR */
+.sort-bar {
+padding: 0 20px 6px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.sort-label { font-size: 12px; color: var(–muted); }
+
+.sort-select {
+font-size: 12px;
+border: 1px solid var(–border);
+border-radius: 6px;
+padding: 4px 8px;
+background: var(–card);
+color: var(–ink);
+font-family: var(–sans);
+outline: none;
+-webkit-appearance: none;
+padding-right: 20px;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%238a7968’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 6px center;
+}
+
+.section-head {
+padding: 4px 20px 10px;
+}
+.section-head h2 {
+font-family: var(–serif);
+font-size: 18px;
+font-weight: 700;
+}
+
+/* CARDS */
+.cards-list {
+padding: 0 20px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding-bottom: 100px;
+}
+
+.place-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+overflow: hidden;
+box-shadow: var(–shadow);
+cursor: pointer;
+}
+
+.card-inner { padding: 14px 14px 12px; }
+
+.card-top {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 5px;
+}
+
+.card-name {
+font-family: var(–serif);
+font-size: 16px;
+font-weight: 700;
+line-height: 1.2;
+flex: 1;
+padding-right: 8px;
+}
+
+.card-name-jp {
+font-size: 11px;
+color: var(–muted);
+font-weight: 400;
+margin-top: 1px;
+margin-bottom: 6px;
+}
+
+.card-badges {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 3px;
+flex-shrink: 0;
+}
+
+.badge {
+font-size: 10px;
+padding: 2px 7px;
+border-radius: 4px;
+font-weight: 600;
+letter-spacing: 0.3px;
+white-space: nowrap;
+text-transform: capitalize;
+}
+
+.badge-cat { background: var(–accent-soft); color: #7a4a30; }
+.badge-saved { background: #dff0e4; color: #2d6a4f; }
+
+.card-desc {
+font-size: 13px;
+color: #4a3d30;
+line-height: 1.5;
+margin-bottom: 10px;
+}
+
+.card-footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-top: 9px;
+border-top: 1px solid var(–border);
+}
+
+.card-meta {
+display: flex;
+gap: 10px;
+font-size: 11px;
+color: var(–muted);
+flex-wrap: wrap;
+}
+
+.card-btn {
+padding: 6px 14px;
+border-radius: 6px;
+border: none;
+background: var(–ink);
+color: var(–paper);
+font-size: 12px;
+font-family: var(–sans);
+font-weight: 500;
+cursor: pointer;
+flex-shrink: 0;
+}
+
+.no-results {
+padding: 40px 20px;
+text-align: center;
+color: var(–muted);
+font-size: 14px;
+line-height: 1.6;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 100%;
+max-width: 430px;
+background: var(–paper);
+border-top: 1px solid var(–border);
+display: flex;
+padding: 8px 0 env(safe-area-inset-bottom, 16px);
+z-index: 100;
+}
+
+.nav-item {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 3px;
+padding: 4px 0;
+cursor: pointer;
+color: var(–muted);
+border: none;
+background: transparent;
+font-family: var(–sans);
+}
+
+.nav-item.active { color: var(–ink); }
+.nav-icon { font-size: 20px; }
+.nav-label { font-size: 10px; letter-spacing: 0.3px; font-weight: 500; }
+
+/* PANEL */
+.panel-overlay {
+position: fixed;
+inset: 0;
+background: rgba(20,15,10,0.5);
+z-index: 200;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s;
+}
+
+.panel-overlay.open { opacity: 1; pointer-events: all; }
+
+.panel {
+position: fixed;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%) translateY(100%);
+width: 100%;
+max-width: 430px;
+background: var(–paper);
+border-radius: 18px 18px 0 0;
+z-index: 201;
+transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+max-height: 88vh;
+overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+}
+
+.panel.open { transform: translateX(-50%) translateY(0); }
+
+.panel-header {
+display: flex;
+align-items: center;
+justify-content: flex-end;
+padding: 12px 16px 4px;
+position: sticky;
+top: 0;
+background: var(–paper);
+z-index: 1;
+}
+
+.panel-close {
+width: 32px; height: 32px;
+border-radius: 50%;
+background: var(–accent-soft);
+border: none;
+cursor: pointer;
+font-size: 17px;
+color: var(–muted);
+display: flex;
+align-items: center;
+justify-content: center;
+line-height: 1;
+flex-shrink: 0;
+}
+
+.panel-content { padding: 0 20px 60px; }
+
+.panel-name {
+font-family: var(–serif);
+font-size: 22px;
+font-weight: 700;
+margin-bottom: 4px;
+}
+
+.panel-jp { color: var(–muted); font-size: 14px; margin-bottom: 12px; }
+
+.panel-badges {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+margin-bottom: 14px;
+}
+
+.panel-desc {
+font-size: 14px;
+line-height: 1.65;
+color: #3a2d20;
+margin-bottom: 16px;
+}
+
+.panel-tips {
+background: var(–accent-soft);
+border-radius: 10px;
+padding: 12px 14px;
+margin-bottom: 20px;
+}
+
+.panel-tips h4 {
+font-size: 10px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 8px;
+font-weight: 600;
+}
+
+.panel-tips ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+.panel-tips li {
+font-size: 13px;
+color: #5a3a25;
+padding-left: 16px;
+position: relative;
+line-height: 1.4;
+}
+
+.panel-tips li::before {
+content: ‘→’;
+position: absolute;
+left: 0;
+color: var(–accent);
+font-size: 11px;
+top: 1px;
+}
+
+.panel-cta { display: flex; gap: 8px; }
+
+.panel-cta a, .panel-cta button {
+flex: 1;
+padding: 13px;
+border-radius: 10px;
+text-align: center;
+font-family: var(–sans);
+font-size: 13px;
+font-weight: 600;
+text-decoration: none;
+border: none;
+cursor: pointer;
+display: block;
+}
+
+.maps-btn { background: var(–ink); color: var(–paper); }
+.notes-btn { background: var(–accent-soft); color: var(–ink); border: 1px solid var(–warm-mid) !important; }
+
+/* IMPORT SCREEN */
+.import-area {
+border: 2px dashed var(–warm-mid);
+border-radius: 12px;
+padding: 30px 20px;
+text-align: center;
+color: var(–muted);
+font-size: 13px;
+line-height: 1.7;
+margin: 16px 0;
+cursor: pointer;
+}
+
+.import-icon { font-size: 32px; margin-bottom: 8px; }
+
+.import-step {
+display: flex;
+gap: 10px;
+align-items: flex-start;
+padding: 10px 0;
+border-bottom: 1px solid var(–border);
+font-size: 13px;
+line-height: 1.5;
+color: #3a2d20;
+}
+
+.step-num {
+width: 22px; height: 22px;
+background: var(–ink);
+color: var(–paper);
+border-radius: 50%;
+font-size: 11px;
+font-weight: 700;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+margin-top: 1px;
+}
+
+/* RESEARCH SCREEN */
+.research-card {
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 14px;
+margin-bottom: 10px;
+cursor: pointer;
+background: var(–card);
+}
+
+.research-card h3 {
+font-family: var(–serif);
+font-size: 17px;
+font-weight: 700;
+margin-bottom: 4px;
+}
+
+.research-card p { font-size: 12px; color: var(–muted); line-height: 1.5; }
+
+.panel-section-title {
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+font-weight: 600;
+margin: 16px 0 10px;
+}
+
+/* ── MAP VIEW ── */
+.map-view {
+display: none;
+position: fixed;
+top: 0; left: 50%; transform: translateX(-50%);
+width: 100%; max-width: 430px;
+height: 100vh;
+z-index: 50;
+flex-direction: column;
+}
+
+.map-view.active { display: flex; }
+
+.map-header {
+position: absolute;
+top: 0; left: 0; right: 0;
+z-index: 1000;
+padding: 52px 12px 10px;
+pointer-events: none;
+}
+
+.map-cat-strip {
+display: flex;
+gap: 6px;
+overflow-x: auto;
+scrollbar-width: none;
+pointer-events: all;
+}
+.map-cat-strip::-webkit-scrollbar { display: none; }
+
+.map-cat-pill {
+flex-shrink: 0;
+padding: 6px 12px;
+border-radius: 20px;
+border: none;
+background: white;
+box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+font-size: 12px;
+font-weight: 600;
+color: var(–muted);
+cursor: pointer;
+font-family: var(–sans);
+white-space: nowrap;
+}
+
+.map-cat-pill.active {
+background: var(–ink);
+color: var(–paper);
+}
+
+#map-container {
+flex: 1;
+width: 100%;
+}
+
+/* Custom Leaflet popup */
+.leaflet-popup-content-wrapper {
+border-radius: 10px !important;
+box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+padding: 0 !important;
+overflow: hidden;
+}
+.leaflet-popup-content {
+margin: 0 !important;
+line-height: 1 !important;
+}
+.leaflet-popup-tip-container { display: none; }
+.leaflet-popup-close-button { display: none !important; }
+
+.map-popup {
+padding: 10px 14px 8px;
+min-width: 150px;
+cursor: pointer;
+}
+.map-popup-name {
+font-family: var(–serif);
+font-size: 14px;
+font-weight: 700;
+color: var(–ink);
+margin-bottom: 3px;
+}
+.map-popup-meta {
+font-size: 11px;
+color: var(–muted);
+margin-bottom: 6px;
+}
+.map-popup-btn {
+display: block;
+width: 100%;
+padding: 6px;
+background: var(–ink);
+color: var(–paper);
+border: none;
+border-radius: 6px;
+font-size: 11px;
+font-weight: 600;
+font-family: var(–sans);
+cursor: pointer;
+text-align: center;
+}
+
+/* Override body scroll when map is open */
+body.map-open { overflow: hidden; }
+</style>
+
+</head>
+<body>
+
+<div class="map-view" id="map-view">
+  <div class="map-header">
+    <div class="map-cat-strip" id="map-cat-strip">
+      <button class="map-cat-pill active" data-cat="all">✦ All</button>
+      <button class="map-cat-pill" data-cat="food">🍜 Food</button>
+      <button class="map-cat-pill" data-cat="drink">🍸 Drink</button>
+      <button class="map-cat-pill" data-cat="culture">⛩️ Culture</button>
+      <button class="map-cat-pill" data-cat="shopping">🏮 Shopping</button>
+      <button class="map-cat-pill" data-cat="art">🎨 Art</button>
+      <button class="map-cat-pill" data-cat="nature">🌿 Nature</button>
+      <button class="map-cat-pill" data-cat="hidden">🔮 Hidden</button>
+    </div>
+  </div>
+  <div id="map-container"></div>
+</div>
+
+<header class="app-header">
+  <div class="header-top">
+    <div class="app-title">
+      日本
+      <span>Travel Companion</span>
+    </div>
+    <div class="header-meta">
+      <strong id="trip-days">Day 4 of 14</strong>
+      <span id="current-city-label">Kyoto</span>
+    </div>
+  </div>
+  <div class="city-tabs" id="city-tabs">
+    <button class="city-tab" data-city="tokyo">Tokyo</button>
+    <button class="city-tab active" data-city="kyoto">Kyoto</button>
+    <button class="city-tab" data-city="osaka">Osaka</button>
+    <button class="city-tab" data-city="all">All</button>
+  </div>
+</header>
+
+<div class="search-bar">
+  <span class="search-icon">🔍</span>
+  <input class="search-input" type="search" id="search-input" placeholder="Search places, vibes, neighbourhoods…">
+</div>
+
+<div class="ask-bar">
+  <div class="ask-bar-header">
+    <div class="ask-dot"></div>
+    <span class="ask-label">Ask your trip planner</span>
+  </div>
+  <div class="ask-prompts" id="ask-prompts">
+    <div class="ask-chip" data-q="Find lunch near me">Find lunch near me</div>
+    <div class="ask-chip" data-q="Cocktail bar tonight">Cocktail bar tonight</div>
+    <div class="ask-chip" data-q="Hidden gem nearby">Hidden gem nearby</div>
+    <div class="ask-chip" data-q="Rainy day activity">Rainy day activity</div>
+    <div class="ask-chip" data-q="Skip the crowds">Skip the crowds</div>
+  </div>
+  <div class="ask-input-row">
+    <input class="ask-text-input" type="text" id="ask-input" placeholder="e.g. cocktail bar near Gion tonight">
+    <button class="ask-send" id="ask-send">↑</button>
+  </div>
+</div>
+
+<div class="response-box" id="response-box">
+  <button class="close-resp" id="close-resp">✕</button>
+  <div class="response-label">Suggestion</div>
+  <div id="response-text"></div>
+</div>
+
+<div class="cat-strip" id="cat-strip">
+  <div class="cat-pill active" data-cat="all">✦ All</div>
+  <div class="cat-pill" data-cat="food">🍜 Food</div>
+  <div class="cat-pill" data-cat="drink">🍸 Drink</div>
+  <div class="cat-pill" data-cat="culture">⛩️ Culture</div>
+  <div class="cat-pill" data-cat="shopping">🏮 Shopping</div>
+  <div class="cat-pill" data-cat="art">🎨 Art</div>
+  <div class="cat-pill" data-cat="nature">🌿 Nature</div>
+  <div class="cat-pill" data-cat="hidden">🔮 Hidden</div>
+</div>
+
+<div class="divider-label"><span>Nearest on your list</span></div>
+<div class="nearby-strip" id="nearby-strip"></div>
+
+<div class="sort-bar">
+  <div class="sort-label" id="cards-count">Showing 0 places</div>
+  <select class="sort-select" id="sort-select">
+    <option value="list">My list first</option>
+    <option value="name">A → Z</option>
+    <option value="cat">By category</option>
+  </select>
+</div>
+
+<div class="section-head">
+  <h2 id="section-title">Kyoto</h2>
+</div>
+
+<div class="cards-list" id="cards-list"></div>
+
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" data-tab="explore">
+    <span class="nav-icon">🗺</span>
+    <span class="nav-label">Explore</span>
+  </button>
+  <button class="nav-item" data-tab="saved">
+    <span class="nav-icon">📍</span>
+    <span class="nav-label">My List</span>
+  </button>
+  <button class="nav-item" data-tab="research">
+    <span class="nav-icon">📖</span>
+    <span class="nav-label">Deep Dive</span>
+  </button>
+  <button class="nav-item" data-tab="import">
+    <span class="nav-icon">↻</span>
+    <span class="nav-label">Refresh</span>
+  </button>
+</nav>
+
+<div class="panel-overlay" id="overlay"></div>
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <button class="panel-close" id="panel-close">✕</button>
+  </div>
+  <div class="panel-content" id="panel-content"></div>
+</div>
+
+<script>
+(function() {
+  // ── DATA ──
+  var places = [
+    {
+      id: 1, lat: 34.9671, lng: 135.7727, city: 'kyoto', cat: 'culture', saved: true,
+      name: 'Fushimi Inari Taisha', jp: '伏見稲荷大社',
+      desc: 'The iconic vermillion torii gate tunnel winding up the forested hillside. Thousands of gates donated by businesses stretch 4km to the summit.',
+      tips: ['Go before 7am or after 6pm to avoid crowds', 'The upper trails past the first two peaks are nearly empty', 'Foxes (kitsune) are sacred here — look for the statues'],
+      dist: '1.2km', walk: '15 min', price: 'Free', icon: '⛩️'
+    },
+    {
+      id: 2, lat: 35.0035, lng: 135.7716, city: 'kyoto', cat: 'drink', saved: true,
+      name: 'Bar Nayuta', jp: 'バー 那由他',
+      desc: 'Intimate counter bar in a machiya townhouse. Specialises in Japanese whisky highballs and seasonal fruit infusions. Only 8 seats.',
+      tips: ['Reservations essential — only 8 seats', 'Ask about the unlisted sake cocktail menu', 'Last entry 11pm'],
+      dist: '0.8km', walk: '10 min', price: '¥¥¥', icon: '🍸'
+    },
+    {
+      id: 3, lat: 35.0047, lng: 135.7659, city: 'kyoto', cat: 'food', saved: false,
+      name: 'Nishiki Market', jp: '錦市場',
+      desc: 'A narrow 400-year-old covered arcade known as "Kyoto\'s kitchen". 100+ vendors sell pickles, tofu, fresh fish, wagashi sweets, and street snacks.',
+      tips: ['Arrive before noon on weekdays for a local feel', 'Try the grilled skewers at the western end', 'Most vendors close by 6pm'],
+      dist: '2.1km', walk: '26 min', price: '¥–¥¥', icon: '🏮'
+    },
+    {
+      id: 4, lat: 35.0094, lng: 135.6656, city: 'kyoto', cat: 'nature', saved: true,
+      name: 'Arashiyama Bamboo Grove', jp: '嵐山 竹林',
+      desc: 'A short but extraordinary path through towering bamboo, the stalks so dense they block out the sky. Combine with Tenryu-ji garden for a half-day.',
+      tips: ['Visit at dawn before tour buses arrive at 9am', 'The path is 500m — extend by walking to Jojakko-ji', 'Rickshaw rides available at the entrance'],
+      dist: '5.4km', walk: '65 min', price: 'Free', icon: '🌿'
+    },
+    {
+      id: 5, lat: 34.9825, lng: 135.7781, city: 'kyoto', cat: 'art', saved: false,
+      name: 'Kyoto National Museum', jp: '京都国立博物館',
+      desc: 'One of Japan\'s finest collections of classical art. Particularly strong on Buddhist sculpture and Heian-period painting. Set in a Meiji-era brick building.',
+      tips: ['The Heisei Chishinkan Wing has the best permanent collection', 'Free on Museum Day (Nov 3)', 'Audio guide adds huge context — worth renting'],
+      dist: '3.0km', walk: '37 min', price: '¥520', icon: '🎨'
+    },
+    {
+      id: 6, lat: 35.0050, lng: 135.7658, city: 'kyoto', cat: 'hidden', saved: true,
+      name: 'Ura-Nishiki Shotengai', jp: '裏錦商店街',
+      desc: 'The forgotten alley running parallel to Nishiki. Where locals actually shop — tofu shops, knife sharpeners, fabric dealers — utterly untouristy.',
+      tips: ['One block north of Nishiki Market', 'The tofu shop on the corner has fresh yuba daily', 'Open 9am–4pm weekdays only'],
+      dist: '2.2km', walk: '27 min', price: 'Free', icon: '🔮'
+    },
+    {
+      id: 7, lat: 35.6715, lng: 139.7640, city: 'tokyo', cat: 'drink', saved: true,
+      name: 'Bar High Five', jp: 'バー ハイファイブ',
+      desc: 'World-renowned Ginza cocktail bar. Hidetsugu Ueno is one of Japan\'s most celebrated bartenders — expect immaculate technique and zero-waste philosophy.',
+      tips: ['Reserve weeks ahead — very limited seats', 'Trust the bartender and skip the menu', 'Smart casual dress required'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍸'
+    },
+    {
+      id: 8, lat: 35.6654, lng: 139.7707, city: 'tokyo', cat: 'food', saved: true,
+      name: 'Tsukiji Outer Market', jp: '築地場外市場',
+      desc: 'The outer market remains open and thriving after the main wholesale market moved to Toyosu. Best place in Tokyo for a fresh seafood breakfast.',
+      tips: ['Arrive by 8am for the best selection', 'The tamagoyaki stalls are a ritual — go to Marutake', 'Brings cash — many stalls don\'t take cards'],
+      dist: '—', walk: '—', price: '¥–¥¥', icon: '🐟'
+    },
+    {
+      id: 9, lat: 34.6687, lng: 135.5008, city: 'osaka', cat: 'food', saved: true,
+      name: 'Dotonbori', jp: '道頓堀',
+      desc: 'Osaka\'s neon-lit canal street — the spiritual home of takoyaki and okonomiyaki. Loud, chaotic, and utterly alive. Best experienced after dark.',
+      tips: ['Eat at standing counters rather than sit-down restaurants for the real experience', 'Ichiran ramen nearby for a solo late-night meal', 'The famous Glico Running Man sign is best photographed from Ebisu Bridge'],
+      dist: '—', walk: '—', price: '¥–¥¥', icon: '🦑'
+    }
+  ];
+
+
+
+  var responses = {
+    'find lunch near me': '🍜 <strong>Nishiki Market</strong> is your best lunch bet — 2.1km away, arrive before noon to beat crowds. Grab skewers at the west end and wander the stalls. Open until 6pm.',
+    'cocktail bar tonight': '🍸 <strong>Bar Nayuta</strong> is on your list and only 0.8km away — 8 seats in a machiya townhouse, exceptional Japanese whisky. Call ahead to reserve, last entry 11pm.',
+    'hidden gem nearby': '🔮 Try <strong>Ura-Nishiki Shotengai</strong> (2.2km) — the forgotten alley behind Nishiki where locals actually shop. Fresh yuba from the tofu shop on the corner. Weekdays only.',
+    'rainy day activity': '🎨 <strong>Kyoto National Museum</strong> — Meiji-era building, world-class Buddhist sculpture, audio guide worth renting. 3km, ¥520 entry. Dry, fascinating, and never overly crowded.',
+    'skip the crowds': '⛩️ For Fushimi Inari, the upper trails past the second peak are nearly empty even at peak season. Go before 7am or after 6pm for the lower gates.'
+  };
+
+  // ── SCHEMA VERSION ──
+  // Bump this number whenever the shape of stored data changes.
+  var SCHEMA_VERSION = 1;
+
+  var LS_KEY_VERSION = 'japan_schema_v';
+  var LS_KEY_SAVED   = 'japan_saved';
+  var LS_KEY_NOTES   = 'japan_notes';
+  var LS_KEY_VISITED = 'japan_visited';
+
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; }
+    catch(e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+  }
+
+  // Migration: translate old localStorage shapes to current schema
+  function migrate() {
+    var stored = lsGet(LS_KEY_VERSION, 0);
+    if (stored === SCHEMA_VERSION) return;
+    // v0 -> v1: no structural changes yet, just stamp version
+    lsSet(LS_KEY_VERSION, SCHEMA_VERSION);
+  }
+  migrate();
+
+  // Merge persisted user state onto places at startup
+  var savedIds   = lsGet(LS_KEY_SAVED,   []);
+  var notesMap   = lsGet(LS_KEY_NOTES,   {});
+  var visitedIds = lsGet(LS_KEY_VISITED, []);
+  places.forEach(function(p) {
+    if (savedIds.indexOf(p.id) !== -1) p.saved = true;
+    p.note    = notesMap[p.id] || '';
+    p.visited = visitedIds.indexOf(p.id) !== -1;
+  });
+
+  function persistSaved() {
+    lsSet(LS_KEY_SAVED, places.filter(function(p){ return p.saved; }).map(function(p){ return p.id; }));
+  }
+  function persistVisited() {
+    lsSet(LS_KEY_VISITED, places.filter(function(p){ return p.visited; }).map(function(p){ return p.id; }));
+  }
+
+  function saveNote(id, text) {
+    var n = lsGet(LS_KEY_NOTES, {});
+    n[id] = text;
+    lsSet(LS_KEY_NOTES, n);
+    var p = places.find(function(x){ return x.id === id; });
+    if (p) p.note = text;
+  }
+
+  // ── EXPORT user data to a JSON file ──
+  function exportUserData() {
+    var data = {
+      schema:  SCHEMA_VERSION,
+      exported: new Date().toISOString(),
+      saved:   lsGet(LS_KEY_SAVED,   []),
+      notes:   lsGet(LS_KEY_NOTES,   {}),
+      visited: lsGet(LS_KEY_VISITED, [])
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = 'japan-trip-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ── IMPORT user data from JSON ──
+  function importUserData(jsonText) {
+    try {
+      var data = JSON.parse(jsonText);
+      if (typeof data.schema === 'undefined') throw new Error('Bad format');
+      lsSet(LS_KEY_SAVED,   data.saved   || []);
+      lsSet(LS_KEY_NOTES,   data.notes   || {});
+      lsSet(LS_KEY_VISITED, data.visited || []);
+      lsSet(LS_KEY_VERSION, SCHEMA_VERSION);
+      places.forEach(function(p) {
+        p.saved   = (data.saved   || []).indexOf(p.id) !== -1;
+        p.note    = (data.notes   || {})[p.id] || '';
+        p.visited = (data.visited || []).indexOf(p.id) !== -1;
+      });
+      return true;
+    } catch(e) { return false; }
+  }
+
+  // ── GPS / LIVE DISTANCES ──
+  function haversineKm(lat1, lon1, lat2, lon2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function updateDistances(lat, lon) {
+    places.forEach(function(p) {
+      if (p.lat && p.lng) {
+        var km = haversineKm(lat, lon, p.lat, p.lng);
+        p.dist = km < 1 ? Math.round(km * 1000) + 'm' : km.toFixed(1) + 'km';
+        p.walk = Math.round(km / 0.08) + ' min';
+      }
+    });
+  }
+
+  function requestLocation() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      updateDistances(pos.coords.latitude, pos.coords.longitude);
+      renderCards();
+    }, function() {}, { enableHighAccuracy: true, timeout: 8000 });
+  }
+
+  // ── MAP ──
+  var mapCityCentres = {
+    kyoto:  [35.0116, 135.7681],
+    tokyo:  [35.6762, 139.6503],
+    osaka:  [34.6937, 135.5023],
+    all:    [35.0116, 135.7681]
+  };
+  var mapInstance = null;
+  var mapMarkers  = [];
+  var mapCat      = 'all';
+
+  var catColours = {
+    food: '#e67e22', drink: '#8e44ad', culture: '#c0392b',
+    shopping: '#d4a017', art: '#2980b9', nature: '#27ae60',
+    hidden: '#16a085', all: '#1a1410'
+  };
+
+  function makePinSvg(cat, saved) {
+    var col = catColours[cat] || catColours.all;
+    var ring = saved ? 'stroke="#2d6a4f" stroke-width="2"' : '';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">' +
+      '<path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill="' + col + '" ' + ring + '/>' +
+      '<circle cx="14" cy="14" r="6" fill="rgba(255,255,255,0.9)"/>' +
+      '</svg>';
+  }
+
+  function initMap() {
+    if (mapInstance) return;
+    var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
+    mapInstance = L.map('map-container', { zoomControl: false }).setView(centre, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(mapInstance);
+    L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+    renderMapPins();
+  }
+
+  function renderMapPins() {
+    if (!mapInstance) return;
+    mapMarkers.forEach(function(m) { mapInstance.removeLayer(m); });
+    mapMarkers = [];
+
+    var filtered = places.filter(function(p) {
+      if (!p.lat || !p.lng) return false;
+      if (state.city !== 'all' && p.city !== state.city) return false;
+      if (mapCat !== 'all' && p.cat !== mapCat) return false;
+      return true;
+    });
+
+    filtered.forEach(function(p) {
+      var icon = L.divIcon({
+        html: makePinSvg(p.cat, p.saved),
+        className: '',
+        iconSize: [28, 36],
+        iconAnchor: [14, 36],
+        popupAnchor: [0, -38]
+      });
+      var marker = L.marker([p.lat, p.lng], { icon: icon }).addTo(mapInstance);
+      var popupHtml =
+        '<div class="map-popup" id="popup-' + p.id + '">' +
+          '<div class="map-popup-name">' + p.icon + ' ' + p.name + '</div>' +
+          '<div class="map-popup-meta">' + p.cat + (p.saved ? ' · ★ saved' : '') + '</div>' +
+          '<button class="map-popup-btn" onclick="window._openFromMap(' + p.id + ')">View details →</button>' +
+        '</div>';
+      marker.bindPopup(popupHtml, { maxWidth: 220, minWidth: 180 });
+      mapMarkers.push(marker);
+    });
+  }
+
+  // Global so Leaflet popup onclick can reach it
+  window._openFromMap = function(id) {
+    openPanel(id);
+    // keep map visible behind panel
+  };
+
+  function showMapView() {
+    document.getElementById('map-view').classList.add('active');
+    document.body.classList.add('map-open');
+    // Leaflet needs the container visible before init
+    setTimeout(function() {
+      initMap();
+      // Fly to correct city
+      var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
+      mapInstance.setView(centre, 14);
+      renderMapPins();
+      mapInstance.invalidateSize();
+    }, 50);
+  }
+
+  function hideMapView() {
+    document.getElementById('map-view').classList.remove('active');
+    document.body.classList.remove('map-open');
+  }
+
+  // ── STATE ──
+  var state = { city: 'kyoto', cat: 'all', search: '', sort: 'list' };
+
+  // ── RENDER NEARBY ──
+  function renderNearby() {
+    var strip = document.getElementById('nearby-strip');
+    var divider = document.querySelector('.divider-label');
+    if (!strip) return;
+
+    // Filter nearby places using same city + cat state, only saved items with a real distance
+    var filtered = places.filter(function(p) {
+      if (!p.dist || p.dist === '—') return false;
+      if (state.city !== 'all' && p.city !== state.city) return false;
+      if (state.cat !== 'all' && p.cat !== state.cat) return false;
+      return true;
+    });
+
+    // Sort by numeric distance
+    filtered.sort(function(a, b) {
+      return parseFloat(a.dist) - parseFloat(b.dist);
+    });
+
+    // Hide the whole section if nothing to show
+    var show = filtered.length > 0;
+    strip.style.display = show ? 'flex' : 'none';
+    if (divider) divider.style.display = show ? 'flex' : 'none';
+    if (!show) return;
+
+    strip.innerHTML = filtered.map(function(p) {
+      return '<div class="nearby-card" data-id="' + p.id + '">' +
+        '<div class="nearby-icon">' + p.icon + '</div>' +
+        '<div class="nearby-name">' + p.name + '</div>' +
+        '<div class="nearby-dist">📍 ' + p.dist + ' away</div>' +
+        '<div class="nearby-type">' + p.cat.charAt(0).toUpperCase() + p.cat.slice(1) + '</div>' +
+        '</div>';
+    }).join('');
+
+    strip.querySelectorAll('.nearby-card').forEach(function(el) {
+      el.addEventListener('click', function() { openPanel(parseInt(el.dataset.id)); });
+    });
+  }
+
+  // ── RENDER CARDS ──
+  function renderCards() {
+    renderNearby();
+    var filtered = places.filter(function(p) {
+      if (state.city !== 'all' && p.city !== state.city) return false;
+      if (state.cat !== 'all' && p.cat !== state.cat) return false;
+      if (state.search) {
+        var q = state.search.toLowerCase();
+        if (p.name.toLowerCase().indexOf(q) === -1 &&
+            p.desc.toLowerCase().indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+
+    if (state.sort === 'list') {
+      filtered.sort(function(a, b) { return (b.saved ? 1 : 0) - (a.saved ? 1 : 0); });
+    } else if (state.sort === 'name') {
+      filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    } else if (state.sort === 'cat') {
+      filtered.sort(function(a, b) { return a.cat.localeCompare(b.cat); });
+    }
+
+    var countEl = document.getElementById('cards-count');
+    if (countEl) countEl.textContent = 'Showing ' + filtered.length + ' place' + (filtered.length !== 1 ? 's' : '');
+
+    var list = document.getElementById('cards-list');
+    if (!list) return;
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="no-results">No places match — try a different filter or city.</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(function(p) {
+      return '<div class="place-card" data-id="' + p.id + '">' +
+        '<div class="card-inner">' +
+          '<div class="card-top">' +
+            '<div>' +
+              '<div class="card-name">' + p.icon + ' ' + p.name + '</div>' +
+              '<div class="card-name-jp">' + p.jp + '</div>' +
+            '</div>' +
+            '<div class="card-badges">' +
+              '<span class="badge badge-cat">' + p.cat + '</span>' +
+              (p.saved ? '<span class="badge badge-saved">✓ on list</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="card-desc">' + p.desc.substring(0, 115) + '…</div>' +
+          '<div class="card-footer">' +
+            '<div class="card-meta">' +
+              '<span>📍 ' + p.dist + '</span>' +
+              '<span>🚶 ' + p.walk + '</span>' +
+              '<span>💴 ' + p.price + '</span>' +
+            '</div>' +
+            '<button class="card-btn">View</button>' +
+          '</div>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+
+    list.querySelectorAll('.place-card').forEach(function(el) {
+      el.addEventListener('click', function() { openPanel(parseInt(el.dataset.id)); });
+    });
+  }
+
+  // ── PANEL ──
+  function openPanel(id) {
+    var p = null;
+    for (var i = 0; i < places.length; i++) { if (places[i].id === id) { p = places[i]; break; } }
+    if (!p) return;
+
+    var content = document.getElementById('panel-content');
+    if (!content) return;
+
+    content.innerHTML =
+      '<div class="panel-name">' + p.icon + ' ' + p.name + '</div>' +
+      '<div class="panel-jp">' + p.jp + '</div>' +
+      '<div class="panel-badges">' +
+        '<span class="badge badge-cat">' + p.cat + '</span>' +
+        (p.saved ? '<span class="badge badge-saved">✓ on your list</span>' : '') +
+        '<span class="badge badge-cat" style="background:#e8eeff;color:#3456a0;">📍 ' + p.dist + '</span>' +
+      '</div>' +
+      '<p class="panel-desc">' + p.desc + '</p>' +
+      '<div class="panel-tips">' +
+        '<h4>Insider Tips</h4>' +
+        '<ul>' + p.tips.map(function(t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
+        '<button class="btn-toggle-saved" style="flex:1;padding:11px;border-radius:8px;border:1px solid var(--border);background:' + (p.saved ? '#dff0e4' : 'var(--card)') + ';color:' + (p.saved ? '#2d6a4f' : 'var(--ink)') + ';font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;">' + (p.saved ? '★ Saved' : '☆ Save') + '</button>' +
+        '<button class="btn-toggle-visited" style="flex:1;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;opacity:' + (p.visited ? '0.5' : '1') + ';">' + (p.visited ? '✓ Visited' : 'Mark visited') + '</button>' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<textarea class="note-input" style="width:100%;height:72px;border:1px solid var(--border);border-radius:8px;padding:10px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--card);outline:none;resize:none;line-height:1.5;" placeholder="Add a note for this place…">' + (p.note || '') + '</textarea>' +
+
+```
+    '<button class="note-save" style="margin-top:4px;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer;">Save note</button>' +
+  '</div>' +
+  '<div class="panel-cta">' +
+    '<a class="maps-btn" href="https://maps.apple.com/?q=' + encodeURIComponent(p.name + ' Japan') + '" target="_blank">Open in Maps</a>' +
+  '</div>';
+
+content.querySelector('.btn-toggle-saved').addEventListener('click', function() {
+  p.saved = !p.saved;
+  persistSaved();
+  this.textContent = p.saved ? '★ Saved' : '☆ Save';
+  this.style.background = p.saved ? '#dff0e4' : '';
+  this.style.color = p.saved ? '#2d6a4f' : '';
+  renderCards();
+});
+
+content.querySelector('.btn-toggle-visited').addEventListener('click', function() {
+  p.visited = !p.visited;
+  persistVisited();
+  this.textContent = p.visited ? '✓ Visited' : 'Mark visited';
+  this.style.opacity = p.visited ? '0.5' : '1';
+  renderCards();
+});
+
+var noteInput = content.querySelector('.note-input');
+var noteSave  = content.querySelector('.note-save');
+noteSave.addEventListener('click', function() {
+  saveNote(p.id, noteInput.value.trim());
+  noteSave.textContent = 'Saved ✓';
+  setTimeout(function(){ noteSave.textContent = 'Save note'; }, 1500);
+});
+
+showPanel();
+```
+
+}
+
+function showPanel() {
+document.getElementById(‘overlay’).classList.add(‘open’);
+document.getElementById(‘panel’).classList.add(‘open’);
+}
+
+function closePanel() {
+document.getElementById(‘overlay’).classList.remove(‘open’);
+document.getElementById(‘panel’).classList.remove(‘open’);
+}
+
+// ── IMPORT PANEL ──
+function showImportPanel() {
+var content = document.getElementById(‘panel-content’);
+if (!content) return;
+
+```
+var lastExport = lsGet('japan_last_export', null);
+var exportLabel = lastExport ? 'Last backup: ' + lastExport.slice(0,10) : 'No backup yet';
+
+content.innerHTML =
+  '<div class="panel-name">↻ Refresh & Backup</div>' +
+
+  '<div class="panel-section-title" style="margin-top:4px;">Your personal data</div>' +
+  '<p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">Your saved places, notes, and visited flags live on this device. Export before updating the app to keep them safe.</p>' +
+  '<div style="display:flex;gap:8px;margin-bottom:6px;">' +
+    '<button id="btn-export" style="flex:1;padding:12px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;">⬇ Export backup</button>' +
+    '<button id="btn-restore" style="flex:1;padding:12px;background:var(--accent-soft);color:var(--ink);border:1px solid var(--warm-mid);border-radius:10px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;">⬆ Restore backup</button>' +
+  '</div>' +
+  '<p style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:20px;">' + exportLabel + '</p>' +
+  '<input type="file" id="restore-file" accept=".json" style="display:none">' +
+
+  '<div class="panel-section-title">Refresh Google Maps list</div>' +
+  '<p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:10px;">Paste place names from your Google Maps saved list — one per line.</p>' +
+  '<div class="import-step"><div class="step-num">1</div><div>Google Maps → <strong>Saved</strong> → open your list</div></div>' +
+  '<div class="import-step"><div class="step-num">2</div><div>Tap <strong>⋮</strong> → <strong>Share list</strong> → copy names</div></div>' +
+  '<div class="import-step"><div class="step-num">3</div><div>Paste below and tap Import</div></div>' +
+  '<textarea id="import-textarea" style="margin-top:12px;width:100%;height:120px;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--card);outline:none;resize:none;line-height:1.6;" placeholder="Bar Nayuta&#10;Fushimi Inari&#10;Arashiyama Bamboo Grove&#10;…"></textarea>' +
+  '<button id="import-btn" style="margin-top:8px;width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;">Import Places</button>' +
+  '<p style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center;line-height:1.6;">All data stays on your device. No internet needed.</p>';
+
+document.getElementById('btn-export').addEventListener('click', function() {
+  lsSet('japan_last_export', new Date().toISOString());
+  exportUserData();
+});
+
+document.getElementById('btn-restore').addEventListener('click', function() {
+  document.getElementById('restore-file').click();
+});
+
+document.getElementById('restore-file').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var ok = importUserData(ev.target.result);
+    if (ok) {
+      renderCards();
+      closePanel();
+      var msg = document.createElement('div');
+      msg.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;';
+      msg.textContent = '✓ Data restored successfully';
+      document.body.appendChild(msg);
+      setTimeout(function(){ document.body.removeChild(msg); }, 2500);
+    } else {
+      alert('Could not read that file. Make sure it is a backup exported from this app.');
+    }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById('import-btn').addEventListener('click', function() {
+  var text = document.getElementById('import-textarea').value.trim();
+  if (!text) { alert('Paste some place names first.'); return; }
+  var lines = text.split('\n').filter(function(l) { return l.trim(); });
+  alert('Imported ' + lines.length + ' places! In the full version these are matched against the research database and merged with your list.');
+  closePanel();
+});
+
+showPanel();
+```
+
+}
+
+// ── RESEARCH PANEL ──
+function showResearchPanel() {
+var content = document.getElementById(‘panel-content’);
+if (!content) return;
+content.innerHTML =
+‘<div class="panel-name">📖 Deep Dive</div>’ +
+‘<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 16px;">Comprehensive offline guides — neighbourhoods, transport, food culture, customs, and seasonal tips.</p>’ +
+[‘Tokyo’, ‘Kyoto’, ‘Osaka’].map(function(c) {
+return ‘<div class="research-card"><h3>’ + c + ‘</h3>’ +
+‘<p>Neighbourhoods · Transport · Customs · Food culture · Seasonal tips · Etiquette</p></div>’;
+}).join(’’) +
+‘<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;text-align:center;">Full research content will be loaded here once Claude generates it.</p>’;
+showPanel();
+}
+
+// ── SHOW RESPONSE ──
+function showResponse(html) {
+var box = document.getElementById(‘response-box’);
+var text = document.getElementById(‘response-text’);
+if (!box || !text) return;
+text.innerHTML = html;
+box.style.display = ‘block’;
+}
+
+// ── EVENT LISTENERS ──
+// City tabs
+document.getElementById(‘city-tabs’).addEventListener(‘click’, function(e) {
+var tab = e.target.closest(’.city-tab’);
+if (!tab) return;
+state.city = tab.dataset.city;
+document.querySelectorAll(’.city-tab’).forEach(function(t) { t.classList.remove(‘active’); });
+tab.classList.add(‘active’);
+var titleEl = document.getElementById(‘section-title’);
+if (titleEl) titleEl.textContent = state.city === ‘all’ ? ‘All Cities’ : state.city.charAt(0).toUpperCase() + state.city.slice(1);
+renderCards();
+if (mapInstance && document.getElementById(‘map-view’).classList.contains(‘active’)) {
+var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
+mapInstance.flyTo(centre, 14, { duration: 1 });
+renderMapPins();
+}
+});
+
+// Category pills
+document.getElementById(‘cat-strip’).addEventListener(‘click’, function(e) {
+var pill = e.target.closest(’.cat-pill’);
+if (!pill) return;
+state.cat = pill.dataset.cat;
+document.querySelectorAll(’.cat-pill’).forEach(function(p) { p.classList.remove(‘active’); });
+pill.classList.add(‘active’);
+renderCards();
+});
+
+// Search
+document.getElementById(‘search-input’).addEventListener(‘input’, function() {
+state.search = this.value;
+renderCards();
+});
+
+// Sort
+document.getElementById(‘sort-select’).addEventListener(‘change’, function() {
+state.sort = this.value;
+renderCards();
+});
+
+// Ask chips
+document.getElementById(‘ask-prompts’).addEventListener(‘click’, function(e) {
+var chip = e.target.closest(’.ask-chip’);
+if (!chip) return;
+var q = chip.dataset.q.toLowerCase();
+document.getElementById(‘ask-input’).value = chip.dataset.q;
+var match = responses[q] || ‘With your full places list loaded, I'd suggest the best option based on your location and what's open now.’;
+showResponse(match);
+});
+
+// Ask send
+document.getElementById(‘ask-send’).addEventListener(‘click’, function() {
+var q = document.getElementById(‘ask-input’).value.toLowerCase().trim();
+if (!q) return;
+var match = null;
+var keys = Object.keys(responses);
+for (var i = 0; i < keys.length; i++) {
+var words = keys[i].split(’ ’);
+for (var j = 0; j < words.length; j++) {
+if (q.indexOf(words[j]) !== -1 && words[j].length > 3) { match = responses[keys[i]]; break; }
+}
+if (match) break;
+}
+showResponse(match || ‘With your full research and places list loaded, I'd give a personalised answer based on your exact location, the time, and what's on your list. This is a prototype — the full version is Claude-powered.’);
+});
+
+// Ask input enter key
+document.getElementById(‘ask-input’).addEventListener(‘keydown’, function(e) {
+if (e.key === ‘Enter’) document.getElementById(‘ask-send’).click();
+});
+
+// Close response
+document.getElementById(‘close-resp’).addEventListener(‘click’, function() {
+document.getElementById(‘response-box’).style.display = ‘none’;
+});
+
+// Overlay and X button close
+document.getElementById(‘overlay’).addEventListener(‘click’, closePanel);
+document.getElementById(‘panel-close’).addEventListener(‘click’, closePanel);
+
+// Swipe down to close panel
+var panelEl = document.getElementById(‘panel’);
+var swipeStartY = 0;
+panelEl.addEventListener(‘touchstart’, function(e) {
+swipeStartY = e.touches[0].clientY;
+}, { passive: true });
+panelEl.addEventListener(‘touchend’, function(e) {
+var dy = e.changedTouches[0].clientY - swipeStartY;
+if (dy > 80) closePanel();
+}, { passive: true });
+
+var mapOpen = false;
+
+function setExploreBtn(isMap) {
+var btn = document.querySelector(’.nav-item[data-tab=“explore”]’);
+if (!btn) return;
+btn.querySelector(’.nav-icon’).textContent  = isMap ? ‘☰’ : ‘🗺’;
+btn.querySelector(’.nav-label’).textContent = isMap ? ‘Browse’ : ‘Explore’;
+}
+
+// Bottom nav
+document.getElementById(‘bottom-nav’).addEventListener(‘click’, function(e) {
+var btn = e.target.closest(’.nav-item’);
+if (!btn) return;
+var tab = btn.dataset.tab;
+
+```
+if (tab === 'explore') {
+  if (mapOpen) {
+    // Toggle back to browse
+    mapOpen = false;
+    hideMapView();
+    closePanel();
+    setExploreBtn(false);
+    // keep explore button active
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    btn.classList.add('active');
+  } else {
+    // Open map
+    mapOpen = true;
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    btn.classList.add('active');
+    closePanel();
+    showMapView();
+    setExploreBtn(true);
+  }
+  return;
+}
+
+// Any other tab: close map first
+mapOpen = false;
+hideMapView();
+setExploreBtn(false);
+document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+btn.classList.add('active');
+if (tab === 'import') { hideMapView(); showImportPanel(); }
+else if (tab === 'research') { hideMapView(); showResearchPanel(); }
+else if (tab === 'saved') { hideMapView();
+  state.cat = 'all';
+  document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+  var savedFiltered = places.filter(function(p) { return p.saved && (state.city === 'all' || p.city === state.city); });
+  var content = document.getElementById('panel-content');
+  content.innerHTML =
+    '<div class="panel-name">📍 Your List</div>' +
+    '<p style="font-size:13px;color:var(--muted);margin:6px 0 16px;">' + savedFiltered.length + ' places saved across all cities</p>' +
+    savedFiltered.map(function(p) {
+      return '<div class="research-card" data-id="' + p.id + '">' +
+        '<h3>' + p.icon + ' ' + p.name + '</h3>' +
+        '<p>' + p.city.charAt(0).toUpperCase() + p.city.slice(1) + ' · ' + p.cat + ' · ' + p.price + '</p>' +
+        '</div>';
+    }).join('');
+  content.querySelectorAll('.research-card[data-id]').forEach(function(el) {
+    el.addEventListener('click', function() { openPanel(parseInt(el.dataset.id)); });
+  });
+  showPanel();
+}
+```
+
+});
+
+// Map category strip
+document.getElementById(‘map-cat-strip’).addEventListener(‘click’, function(e) {
+var pill = e.target.closest(’.map-cat-pill’);
+if (!pill) return;
+mapCat = pill.dataset.cat;
+document.querySelectorAll(’.map-cat-pill’).forEach(function(p) { p.classList.remove(‘active’); });
+pill.classList.add(‘active’);
+renderMapPins();
+});
+
+// City tab changes should also update map if open
+var origCityHandler = document.getElementById(‘city-tabs’).onclick;
+
+// ── INIT ──
+requestLocation();
+renderCards();
+
+})();
+</script>
+
+</body>
+</html>
