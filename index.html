@@ -377,6 +377,9 @@ background-position: right 6px center;
 
 .section-head {
 padding: 4px 20px 10px;
+display: flex;
+align-items: baseline;
+gap: 8px;
 }
 .section-head h2 {
 font-family: var(--serif);
@@ -927,6 +930,7 @@ body.map-open { overflow: hidden; }
 
 <div class="section-head">
   <h2 id="section-title">Kyoto</h2>
+  <span id="loc-status" style="font-size:11px;letter-spacing:0.02em;display:none;"></span>
 </div>
 
 <div class="cards-list" id="cards-list"></div>
@@ -967,42 +971,42 @@ document.addEventListener("DOMContentLoaded", function() {
       name: 'Fushimi Inari Taisha', jp: '伏見稲荷大社',
       desc: 'The iconic vermillion torii gate tunnel winding up the forested hillside. Thousands of gates donated by businesses stretch 4km to the summit.',
       tips: ['Go before 7am or after 6pm to avoid crowds', 'The upper trails past the first two peaks are nearly empty', 'Foxes (kitsune) are sacred here — look for the statues'],
-      dist: '1.2km', walk: '15 min', price: 'Free', icon: '⛩️'
+      dist: '—', walk: '—', price: 'Free', icon: '⛩️'
     },
     {
       id: 2, lat: 35.0035, lng: 135.7716, city: 'kyoto', cat: 'drink', saved: true,
       name: 'Bar Nayuta', jp: 'バー 那由他',
       desc: 'Intimate counter bar in a machiya townhouse. Specialises in Japanese whisky highballs and seasonal fruit infusions. Only 8 seats.',
       tips: ['Reservations essential — only 8 seats', 'Ask about the unlisted sake cocktail menu', 'Last entry 11pm'],
-      dist: '0.8km', walk: '10 min', price: '¥¥¥', icon: '🍸'
+      dist: '—', walk: '—', price: '¥¥¥', icon: '🍸'
     },
     {
       id: 3, lat: 35.0047, lng: 135.7659, city: 'kyoto', cat: 'food', saved: false,
       name: 'Nishiki Market', jp: '錦市場',
       desc: 'A narrow 400-year-old covered arcade known as "Kyoto\'s kitchen". 100+ vendors sell pickles, tofu, fresh fish, wagashi sweets, and street snacks.',
       tips: ['Arrive before noon on weekdays for a local feel', 'Try the grilled skewers at the western end', 'Most vendors close by 6pm'],
-      dist: '2.1km', walk: '26 min', price: '¥–¥¥', icon: '🏮'
+      dist: '—', walk: '—', price: '¥–¥¥', icon: '🏮'
     },
     {
       id: 4, lat: 35.0094, lng: 135.6656, city: 'kyoto', cat: 'nature', saved: true,
       name: 'Arashiyama Bamboo Grove', jp: '嵐山 竹林',
       desc: 'A short but extraordinary path through towering bamboo, the stalks so dense they block out the sky. Combine with Tenryu-ji garden for a half-day.',
       tips: ['Visit at dawn before tour buses arrive at 9am', 'The path is 500m — extend by walking to Jojakko-ji', 'Rickshaw rides available at the entrance'],
-      dist: '5.4km', walk: '65 min', price: 'Free', icon: '🌿'
+      dist: '—', walk: '—', price: 'Free', icon: '🌿'
     },
     {
       id: 5, lat: 34.9825, lng: 135.7781, city: 'kyoto', cat: 'art', saved: false,
       name: 'Kyoto National Museum', jp: '京都国立博物館',
       desc: 'One of Japan\'s finest collections of classical art. Particularly strong on Buddhist sculpture and Heian-period painting. Set in a Meiji-era brick building.',
       tips: ['The Heisei Chishinkan Wing has the best permanent collection', 'Free on Museum Day (Nov 3)', 'Audio guide adds huge context — worth renting'],
-      dist: '3.0km', walk: '37 min', price: '¥520', icon: '🎨'
+      dist: '—', walk: '—', price: '¥520', icon: '🎨'
     },
     {
       id: 6, lat: 35.0050, lng: 135.7658, city: 'kyoto', cat: 'hidden', saved: true,
       name: 'Ura-Nishiki Shotengai', jp: '裏錦商店街',
       desc: 'The forgotten alley running parallel to Nishiki. Where locals actually shop — tofu shops, knife sharpeners, fabric dealers — utterly untouristy.',
       tips: ['One block north of Nishiki Market', 'The tofu shop on the corner has fresh yuba daily', 'Open 9am–4pm weekdays only'],
-      dist: '2.2km', walk: '27 min', price: 'Free', icon: '🔮'
+      dist: '—', walk: '—', price: 'Free', icon: '🔮'
     },
     {
       id: 7, lat: 35.6715, lng: 139.7640, city: 'tokyo', cat: 'drink', saved: true,
@@ -1147,12 +1151,28 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  function setLocStatus(text, color) {
+    var el = document.getElementById('loc-status');
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = color || '';
+    el.style.display = text ? '' : 'none';
+  }
+
   function requestLocation() {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      setLocStatus('');
+      return;
+    }
+    setLocStatus('Locating…', 'var(--muted)');
     navigator.geolocation.getCurrentPosition(function(pos) {
       updateDistances(pos.coords.latitude, pos.coords.longitude);
+      setLocStatus('Live distances', 'var(--accent)');
       renderCards();
-    }, function() {}, { enableHighAccuracy: true, timeout: 8000 });
+    }, function() {
+      setLocStatus('');
+      renderCards();
+    }, { enableHighAccuracy: true, timeout: 8000 });
   }
 
   // ── MAP ──
