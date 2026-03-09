@@ -872,6 +872,7 @@ body.map-open { overflow: hidden; }
     <button class="city-tab" data-city="tokyo">Tokyo</button>
     <button class="city-tab active" data-city="kyoto">Kyoto</button>
     <button class="city-tab" data-city="osaka">Osaka</button>
+    <button class="city-tab" data-city="nara">Nara</button>
     <button class="city-tab" data-city="all">All</button>
   </div>
 </header>
@@ -1028,6 +1029,170 @@ document.addEventListener("DOMContentLoaded", function() {
       desc: 'Osaka\'s neon-lit canal street — the spiritual home of takoyaki and okonomiyaki. Loud, chaotic, and utterly alive. Best experienced after dark.',
       tips: ['Eat at standing counters rather than sit-down restaurants for the real experience', 'Ichiran ramen nearby for a solo late-night meal', 'The famous Glico Running Man sign is best photographed from Ebisu Bridge'],
       dist: '—', walk: '—', price: '¥–¥¥', icon: '🦑'
+    },
+    // ── TOKYO (new) ──
+    {
+      id: 10, lat: 35.6833, lng: 139.7731, city: 'tokyo', cat: 'shopping', saved: true,
+      name: 'RAGTAG Nihonbashi', jp: 'ラグタグ 日本橋高島屋店',
+      desc: 'Tokyo\'s premier curated secondhand fashion inside Nihonbashi Takashimaya. Exceptional edit of used designer clothing — Comme des Garçons, Issey Miyake, Yohji Yamamoto at a fraction of retail.',
+      tips: ['Stock changes daily — go early on weekdays', 'Ask staff to check the storage room for unlisted pieces', 'Bring your passport for tax-free purchases on larger items'],
+      dist: '—', walk: '—', price: '¥¥–¥¥¥¥', icon: '👗'
+    },
+    {
+      id: 11, lat: 35.6717, lng: 139.7649, city: 'tokyo', cat: 'shopping', saved: true,
+      name: 'rt Ginza', jp: 'アールティー銀座',
+      desc: 'Curated secondhand and vintage menswear in the heart of Ginza. Tight edit of Japanese and international designer pieces — Margiela, Helmut Lang, Japanese contemporary — at accessible prices.',
+      tips: ['Stock turns over fast — worth returning on different days', 'Best for Japanese contemporary labels and 90s archive pieces', 'Near Ginza station exits A2/A3'],
+      dist: '—', walk: '—', price: '¥¥–¥¥¥', icon: '🧥'
+    },
+    {
+      id: 12, lat: 35.6938, lng: 139.7036, city: 'tokyo', cat: 'food', saved: true,
+      name: 'Gyopao Gyoza Shinjuku', jp: 'ぎょうぱお 新宿店',
+      desc: 'Cult soup gyoza spot near Shinjuku with a 4.8-star rating and nearly 9,000 reviews. The dumplings arrive in a rich, cloudy broth — closer to a hot pot than standard gyoza. Loud, fun, standing-bar energy.',
+      tips: ['Queue before opening — it fills fast', 'Order the soup gyoza set, not individual portions', 'Cash-only — there\'s an ATM in the nearby convenience store'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🥟'
+    },
+    {
+      id: 13, lat: 35.6718, lng: 139.7644, city: 'tokyo', cat: 'food', saved: true,
+      name: 'Ginza Cafe Hanon', jp: '銀座カフェ ハノン',
+      desc: 'Small, much-loved Ginza cafe famed for extraordinarily fluffy Japanese-style soufflé pancakes. The pancakes take 15–20 minutes to prepare — every minute worth it. Perfect mid-morning or afternoon stop.',
+      tips: ['Arrive at opening or expect a queue', 'The plain butter version is the classic order', 'Combine with nearby Ginza shopping at Uniqlo flagship or Dover Street Market'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🥞'
+    },
+    {
+      id: 14, lat: 35.7149, lng: 139.7966, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Asakusa Shrine', jp: '浅草神社',
+      desc: 'An often-overlooked Shinto shrine standing beside the famous Sensō-ji. Dedicated to the three fishermen who discovered the Kannon statue. Quieter and more atmospheric than its Buddhist neighbour next door.',
+      tips: ['Look for the tanuki (raccoon dog) statues dotted around the grounds', 'Visit early morning before Sensō-ji crowds arrive', 'Sanja Matsuri in May is one of Tokyo\'s wildest festivals — centred here'],
+      dist: '—', walk: '—', price: 'Free', icon: '⛩️'
+    },
+    {
+      id: 15, lat: 35.6715, lng: 139.7652, city: 'tokyo', cat: 'food', saved: true,
+      name: 'HANA-Kitcho', jp: '花吉兆',
+      desc: 'The Ginza outpost of Japan\'s most revered kaiseki dynasty. Private tatami rooms, impeccable seasonal menus, and presentation that is itself an art form. A genuine once-in-a-trip experience.',
+      tips: ['Reserve weeks ahead — demand far exceeds seats', 'Lunch kaiseki is more accessible than dinner in price and booking', 'Business-casual dress minimum; consider bringing a small gift for the host'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍱'
+    },
+    {
+      id: 16, lat: 35.6938, lng: 139.7044, city: 'tokyo', cat: 'hidden', saved: true,
+      name: 'Shinjuku Golden-Gai', jp: '新宿ゴールデン街',
+      desc: 'A labyrinth of ~200 tiny bars packed into six narrow alleys near Shinjuku Kabukicho. Each holds 6–10 people with its own personality — film, jazz, punk, literature. One of Tokyo\'s most atmospheric nightlife pockets.',
+      tips: ['Most bars charge a small cover (¥500–¥1,000) — it\'s worth it', 'Find a bar with an open door and welcoming owner rather than the obvious tourist traps', 'The outer alleys are better than the main strip; go deeper'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🏮'
+    },
+    {
+      id: 17, lat: 35.6585, lng: 139.7023, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Mag\'s Park Rooftop', jp: 'マグズパーク屋上',
+      desc: 'Rooftop observation area atop Shibuya Scramble Square, directly overlooking the world\'s busiest pedestrian crossing 46 floors below. The crossing is most dramatic at rush hour — a river of people in every direction.',
+      tips: ['Dusk visits get both the daylight clarity and the evening lights', 'The outdoor SKY STAGE section gives the best downward angles on the crossing', 'Combine with dinner in the restaurant floors below'],
+      dist: '—', walk: '—', price: '¥2,000', icon: '🌆'
+    },
+    {
+      id: 18, lat: 34.7994, lng: 135.3564, city: 'osaka', cat: 'nature', saved: true,
+      name: 'Taikou-no-Yu', jp: '太閤の湯',
+      desc: 'Large resort hot spring and spa complex in Takarazuka, 30 minutes from Osaka. Multiple indoor and outdoor onsen pools, saunas, and a restaurant. A proper Japanese sento experience away from tourist crowds.',
+      tips: ['Tattoos are not permitted — standard Japanese onsen rule', 'Rent a yukata at the entrance for full comfort between baths', 'The outdoor rotemburo at night under the sky is the highlight'],
+      dist: '—', walk: '—', price: '¥¥', icon: '♨️'
+    },
+    {
+      id: 19, lat: 35.6712, lng: 139.7658, city: 'tokyo', cat: 'drink', saved: true,
+      name: 'Bar Centifolia', jp: 'バー チェンティフォリア',
+      desc: 'Exceptional Ginza cocktail bar with a floral and botanical philosophy. Intimate counter seats, extraordinary ingredient sourcing, and one of Tokyo\'s most thoughtful seasonal menus. ¥10,000+ per head.',
+      tips: ['Reserve ahead — counter seats only, very limited', 'Ask about the seasonal botanical menu rather than ordering from the list', 'Smart dress required — this is a serious bar'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍸'
+    },
+    {
+      id: 20, lat: 35.7148, lng: 139.7967, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Sensō-ji', jp: '浅草寺',
+      desc: 'Tokyo\'s oldest temple, founded in 628 AD. The Thunder Gate (Kaminarimon) and Nakamise shopping street lead to the main hall. Spectacular at dawn or dusk. The five-storey pagoda is a classic silhouette.',
+      tips: ['Visit before 7am for the temple without crowds — locals come to pray at dawn', 'The Nakamise shops open ~10am — better souvenirs than the airport', 'The pagoda photographs best from the west side of the precinct'],
+      dist: '—', walk: '—', price: 'Free', icon: '🏯'
+    },
+    {
+      id: 21, lat: 35.7101, lng: 139.8107, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Tokyo Skytree', jp: '東京スカイツリー',
+      desc: 'The world\'s second-tallest structure at 634m. Two observation decks — Tembo Deck at 350m and Tembo Galleria at 450m. On a clear day, Mt. Fuji is visible to the west.',
+      tips: ['Book online in advance — walk-up queues can be 90+ minutes', 'Sunset visits offer both daytime clarity and evening lights', 'The Solamachi mall at the base has excellent food and shopping'],
+      dist: '—', walk: '—', price: '¥2,100–3,100', icon: '🗼'
+    },
+    {
+      id: 22, lat: 35.6789, lng: 139.7642, city: 'tokyo', cat: 'food', saved: true,
+      name: 'SÉZANNE', jp: 'セザン',
+      desc: 'Two Michelin-starred French restaurant by chef Daniel Calvert in the Four Seasons Marunouchi. Precise French technique applied to Japanese ingredients. Widely considered one of Asia\'s finest dining rooms.',
+      tips: ['Book 2–3 months ahead via the Four Seasons website', 'The tasting menu is the only option at dinner', 'Ask for a counter seat facing the open kitchen for the full show'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍽️'
+    },
+    {
+      id: 23, lat: 35.6716, lng: 139.7648, city: 'tokyo', cat: 'food', saved: true,
+      name: 'Tempura Kondo', jp: 'てんぷら近藤',
+      desc: 'Legendary Ginza tempura counter by master chef Fumio Kondo. His vegetable tempura is as celebrated as the seafood — the sweet potato is iconic. Adults-only atmosphere; serious and refined.',
+      tips: ['No children — the atmosphere is quiet and focused', 'Counter seating only — watch the chef work directly', 'Lunch is slightly more affordable and easier to book than dinner'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍤'
+    },
+    {
+      id: 24, lat: 35.7188, lng: 139.7767, city: 'tokyo', cat: 'art', saved: true,
+      name: 'Tokyo National Museum', jp: '東京国立博物館',
+      desc: 'Japan\'s oldest and largest museum in Ueno Park. Extraordinary collection spanning Japanese archaeology, samurai armour, Buddhist sculpture, and ceramics. The Honkan building alone is worth the trip.',
+      tips: ['The Japanese Gallery (Honkan) is the must-see — two full floors of national treasures', 'The Heiseikan wing has rotating special exhibitions — check before you go', 'Free on museum days — schedule online'],
+      dist: '—', walk: '—', price: '¥1,000', icon: '🏛️'
+    },
+    {
+      id: 25, lat: 35.6456, lng: 139.7925, city: 'tokyo', cat: 'art', saved: true,
+      name: 'teamLab Planets', jp: 'チームラボプラネッツ',
+      desc: 'Immersive digital art in Toyosu where you wade through knee-deep water and walk into infinite mirror rooms. Four major works by the teamLab collective. Genuinely mind-bending for all ages.',
+      tips: ['Book online — tickets sell out weeks ahead', 'Remove shoes and roll trousers to the knee at the entrance', 'The floating flower garden and water area are the highlights — allow extra time'],
+      dist: '—', walk: '—', price: '¥3,200', icon: '🌌'
+    },
+    {
+      id: 26, lat: 35.6852, lng: 139.7528, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Imperial Palace', jp: '皇居',
+      desc: 'Residence of Japan\'s Emperor, set in 3.5km² of moated gardens in the heart of Tokyo. The East Gardens are free and open most days. The outer stone walls and moat are deeply photogenic.',
+      tips: ['The East Gardens (Higashi-Gyoen) are free — don\'t miss the Ninomaru garden', 'Free guided inner palace tours run twice daily — book online months ahead', 'The Nijubashi bridge is the classic photo spot'],
+      dist: '—', walk: '—', price: 'Free', icon: '🏯'
+    },
+    {
+      id: 27, lat: 35.6763, lng: 139.6993, city: 'tokyo', cat: 'culture', saved: true,
+      name: 'Meiji Jingu', jp: '明治神宮',
+      desc: 'Tokyo\'s most serene major shrine, set in 70 hectares of forested inner gardens near Harajuku. Dedicated to Emperor Meiji and Empress Shoken. The wide gravel path through the forest is meditative.',
+      tips: ['Ideal for Day 1 or 2 to set the mood for the trip', 'Early morning is most peaceful — locals come to pray before work', 'The inner garden (separate admission) has a beautiful iris garden in June'],
+      dist: '—', walk: '—', price: 'Free', icon: '⛩️'
+    },
+    {
+      id: 28, lat: 35.6929, lng: 139.6996, city: 'tokyo', cat: 'drink', saved: true,
+      name: 'Bar Benfiddich', jp: 'バー ベンフィデック',
+      desc: 'Shinjuku\'s most eccentric cocktail bar. Bartender Hiroyasu Kayama grows herbs on the rooftop and distils his own spirits in-house. Every drink is a one-of-a-kind creation — no menu, just a conversation.',
+      tips: ['No menu — describe a flavour or mood and trust the bartender completely', 'Takes reservations — strongly recommended', 'The homemade absinthe drip ritual is worth asking for'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍸'
+    },
+    {
+      id: 29, lat: 35.6593, lng: 139.7002, city: 'tokyo', cat: 'drink', saved: true,
+      name: 'The SG Club', jp: 'ザ エスジー クラブ',
+      desc: 'Award-winning Shibuya cocktail bar from the Sober Company group. Two floors — upstairs Guzzle is casual; downstairs Sip is a reservation-only refined experience. Seasonal Japanese ingredients throughout.',
+      tips: ['Book the downstairs "Sip" room for the full experience', 'The Japanese whisky and shochu selection is outstanding', 'One of the best-designed bar interiors in Tokyo — arrive early to appreciate it'],
+      dist: '—', walk: '—', price: '¥¥¥', icon: '🍸'
+    },
+    // ── KYOTO (new) ──
+    {
+      id: 30, lat: 35.0053, lng: 135.7653, city: 'kyoto', cat: 'culture', saved: true,
+      name: 'Tea Ceremony Camellia', jp: 'ティーセレモニー カメリア',
+      desc: 'Highly rated tea ceremony experience in central Kyoto with a 4.9-star rating. Small groups, English instruction, and an authentic tatami room setting. One of the most accessible introductions to chado (the way of tea).',
+      tips: ['Book well ahead — small group size means it sells out fast', 'Wear comfortable clothing you can kneel in for 45–60 minutes', 'The matcha and wagashi sweet pairing is included — arrive hungry for it'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🍵'
+    },
+    {
+      id: 31, lat: 35.0094, lng: 135.6731, city: 'kyoto', cat: 'nature', saved: true,
+      name: 'Arashiyama Monkey Park', jp: '嵐山モンキーパークいわたやま',
+      desc: 'A 20-minute hike up Iwatayama mountain rewards with panoramic views over Arashiyama and a park where 120+ wild Japanese macaques roam freely. Humans feed the monkeys from inside a cage — the monkeys roam outside.',
+      tips: ['Combine with the Bamboo Grove — 10-minute walk from the base', 'The climb is moderately steep — wear good shoes', 'Monkeys are most active and approachable in the morning'],
+      dist: '—', walk: '—', price: '¥550', icon: '🐒'
+    },
+    // ── NARA ──
+    {
+      id: 32, lat: 34.6851, lng: 135.8431, city: 'nara', cat: 'nature', saved: true,
+      name: 'Nara Park', jp: '奈良公園',
+      desc: 'A vast park in central Nara where over 1,000 sika deer roam freely among ancient temples. The deer are considered sacred messengers of the gods and will bow back if you bow first. Tōdai-ji with its giant Buddha is within the grounds.',
+      tips: ['Go early morning before tour buses — magical at 7am with mist in the trees', 'Deer crackers (shika senbei) sold at stalls throughout — buy several packets', 'The deer bow back if you bow to them first — genuine, not a myth'],
+      dist: '—', walk: '—', price: 'Free', icon: '🦌'
     }
   ];
 
@@ -1180,6 +1345,7 @@ document.addEventListener("DOMContentLoaded", function() {
     kyoto:  [35.0116, 135.7681],
     tokyo:  [35.6762, 139.6503],
     osaka:  [34.6937, 135.5023],
+    nara:   [34.6851, 135.8431],
     all:    [35.0116, 135.7681]
   };
   var mapInstance = null;
