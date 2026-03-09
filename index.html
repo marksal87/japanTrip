@@ -836,6 +836,102 @@ text-align: center;
 
 /* Override body scroll when map is open */
 body.map-open { overflow: hidden; }
+
+/* ── MAP ACTION ROW ── */
+.map-action-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+  pointer-events: all;
+}
+.map-action-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+.map-action-btn.en-active { background: #2d6a4f; color: white; }
+
+/* Add-place banner */
+.add-place-banner {
+  display: none;
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-top: 4px;
+  pointer-events: all;
+}
+.add-place-banner.active { display: block; }
+
+/* Add-place form sheet */
+.add-place-sheet {
+  display: none;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--paper);
+  border-radius: 16px 16px 0 0;
+  padding: 16px 20px 36px;
+  z-index: 2000;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+  pointer-events: all;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+.add-place-sheet.active { display: block; }
+.add-place-sheet h3 { font-family: var(--serif); font-size: 17px; margin-bottom: 14px; }
+.add-place-field { margin-bottom: 11px; }
+.add-place-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.add-place-field input,
+.add-place-field select,
+.add-place-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--card);
+  outline: none;
+}
+.add-place-field textarea { height: 64px; resize: none; }
+.add-place-actions { display: flex; gap: 8px; margin-top: 14px; }
+.add-place-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save-place { background: var(--ink); color: var(--paper); }
+.btn-cancel-place { background: var(--accent-soft); color: var(--ink); border: 1px solid var(--warm-mid) !important; }
+
+/* Crosshair cursor in pick mode */
+#map-container.pick-mode { cursor: crosshair !important; }
+#map-container.pick-mode .leaflet-interactive { cursor: crosshair !important; }
 </style>
 
 </head>
@@ -843,6 +939,11 @@ body.map-open { overflow: hidden; }
 
 <div class="map-view" id="map-view">
   <div class="map-header">
+    <div class="map-action-row">
+      <button class="map-action-btn" id="btn-toggle-en">🌐 EN</button>
+      <button class="map-action-btn" id="btn-add-place">＋ Add place</button>
+    </div>
+    <div class="add-place-banner" id="add-place-banner">Tap anywhere on the map to drop a pin</div>
     <div class="map-cat-strip" id="map-cat-strip">
       <button class="map-cat-pill active" data-cat="all">✦ All</button>
       <button class="map-cat-pill" data-cat="food">🍜 Food</button>
@@ -855,6 +956,59 @@ body.map-open { overflow: hidden; }
     </div>
   </div>
   <div id="map-container"></div>
+
+  <!-- Add Place Form Sheet -->
+  <div class="add-place-sheet" id="add-place-sheet">
+    <h3>＋ Add a place</h3>
+    <div class="add-place-field">
+      <label>Name *</label>
+      <input type="text" id="ap-name" placeholder="e.g. Café de Kura">
+    </div>
+    <div class="add-place-field">
+      <label>Japanese name</label>
+      <input type="text" id="ap-jp" placeholder="e.g. カフェ・ド・クラ">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <div class="add-place-field" style="flex:1;">
+        <label>Category</label>
+        <select id="ap-cat">
+          <option value="food">🍜 Food</option>
+          <option value="drink">🍸 Drink</option>
+          <option value="culture">⛩️ Culture</option>
+          <option value="shopping">🏮 Shopping</option>
+          <option value="art">🎨 Art</option>
+          <option value="nature">🌿 Nature</option>
+          <option value="hidden">🔮 Hidden</option>
+        </select>
+      </div>
+      <div class="add-place-field" style="flex:1;">
+        <label>Price</label>
+        <select id="ap-price">
+          <option value="Free">Free</option>
+          <option value="¥">¥</option>
+          <option value="¥¥">¥¥</option>
+          <option value="¥¥¥">¥¥¥</option>
+        </select>
+      </div>
+    </div>
+    <div class="add-place-field">
+      <label>City</label>
+      <select id="ap-city">
+        <option value="tokyo">Tokyo</option>
+        <option value="kyoto">Kyoto</option>
+        <option value="osaka">Osaka</option>
+        <option value="nara">Nara</option>
+      </select>
+    </div>
+    <div class="add-place-field">
+      <label>Notes</label>
+      <textarea id="ap-desc" placeholder="What makes this place special?"></textarea>
+    </div>
+    <div class="add-place-actions">
+      <button class="btn-cancel-place" id="btn-cancel-place">Cancel</button>
+      <button class="btn-save-place" id="btn-save-place">Save place</button>
+    </div>
+  </div>
 </div>
 
 <header class="app-header">
@@ -1229,6 +1383,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var LS_KEY_SAVED   = 'japan_saved';
   var LS_KEY_NOTES   = 'japan_notes';
   var LS_KEY_VISITED = 'japan_visited';
+  var LS_KEY_CUSTOM  = 'japan_custom_places';
 
   function lsGet(key, fallback) {
     try { var v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; }
@@ -1246,6 +1401,14 @@ document.addEventListener("DOMContentLoaded", function() {
     lsSet(LS_KEY_VERSION, SCHEMA_VERSION);
   }
   migrate();
+
+  // Load user-added custom places from localStorage and merge in
+  var customPlaces = lsGet(LS_KEY_CUSTOM, []);
+  customPlaces.forEach(function(cp) {
+    if (!places.find(function(p){ return p.id === cp.id; })) {
+      places.push(cp);
+    }
+  });
 
   // Merge persisted user state onto places at startup
   var savedIds   = lsGet(LS_KEY_SAVED,   []);
@@ -1366,6 +1529,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapInstance = null;
   var mapMarkers  = [];
   var mapCat      = 'all';
+  var mapTileEN   = false;
+  var mapTileLayer = null;
+  var TILE_OSM    = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var TILE_CARTO  = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  var ATTR_OSM    = '© OpenStreetMap contributors';
+  var ATTR_CARTO  = '© OpenStreetMap contributors © CARTO';
+  var addingPlace    = false;
+  var addPlaceLatLng = null;
 
   var catColours = {
     food: '#e67e22', drink: '#8e44ad', culture: '#c0392b',
@@ -1386,11 +1557,17 @@ document.addEventListener("DOMContentLoaded", function() {
     if (mapInstance) return;
     var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
     mapInstance = L.map('map-container', { zoomControl: false }).setView(centre, 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
+    mapTileLayer = L.tileLayer(mapTileEN ? TILE_CARTO : TILE_OSM, {
+      attribution: mapTileEN ? ATTR_CARTO : ATTR_OSM,
       maxZoom: 19
     }).addTo(mapInstance);
     L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+    mapInstance.on('click', function(e) {
+      if (!addingPlace) return;
+      addPlaceLatLng = e.latlng;
+      stopAddPlaceMode();
+      prefillAddPlaceForm(e.latlng.lat, e.latlng.lng);
+    });
     renderMapPins();
   }
 
@@ -1572,6 +1749,7 @@ document.addEventListener("DOMContentLoaded", function() {
       '<div class="panel-badges">' +
         '<span class="badge badge-cat">' + p.cat + '</span>' +
         (p.saved ? '<span class="badge badge-saved">✓ on your list</span>' : '') +
+        (p.userAdded ? '<span class="badge badge-cat" style="background:#fff3e0;color:#b45309;">✏ yours</span>' : '') +
         '<span class="badge badge-cat" style="background:#e8eeff;color:#3456a0;">📍 ' + p.dist + '</span>' +
       '</div>' +
       '<p class="panel-desc">' + p.desc + '</p>' +
@@ -1590,6 +1768,7 @@ document.addEventListener("DOMContentLoaded", function() {
   '</div>' +
   '<div class="panel-cta">' +
     '<a class="maps-btn" href="https://maps.apple.com/?q=' + encodeURIComponent(p.name + ' Japan') + '" target="_blank">Open in Maps</a>' +
+    (p.userAdded ? '<button onclick="window._deleteCustomPlace(' + p.id + ')" style="margin-top:8px;width:100%;padding:11px;border-radius:8px;border:1px solid #e8c4c4;background:#fdf0f0;color:#c0392b;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;">🗑 Remove this place</button>' : '') +
   '</div>';
 
 content.querySelector('.btn-toggle-saved').addEventListener('click', function() {
@@ -1725,6 +1904,109 @@ if (!box || !text) return;
 text.innerHTML = html;
 box.style.display = 'block';
 }
+
+// ── TILE TOGGLE ──
+function toggleEnglishTiles() {
+  mapTileEN = !mapTileEN;
+  document.getElementById('btn-toggle-en').classList.toggle('en-active', mapTileEN);
+  if (mapInstance && mapTileLayer) {
+    mapInstance.removeLayer(mapTileLayer);
+    mapTileLayer = L.tileLayer(mapTileEN ? TILE_CARTO : TILE_OSM, {
+      attribution: mapTileEN ? ATTR_CARTO : ATTR_OSM,
+      maxZoom: 19
+    }).addTo(mapInstance);
+  }
+}
+
+// ── ADD PLACE ──
+function startAddPlaceMode() {
+  addingPlace = true;
+  document.getElementById('map-container').classList.add('pick-mode');
+  document.getElementById('add-place-banner').classList.add('active');
+  document.getElementById('btn-add-place').textContent = '✕ Cancel';
+}
+
+function stopAddPlaceMode() {
+  addingPlace = false;
+  document.getElementById('map-container').classList.remove('pick-mode');
+  document.getElementById('add-place-banner').classList.remove('active');
+  document.getElementById('btn-add-place').textContent = '＋ Add place';
+}
+
+function prefillAddPlaceForm(lat, lng) {
+  var cityEl = document.getElementById('ap-city');
+  if (cityEl && state.city !== 'all') cityEl.value = state.city;
+  document.getElementById('ap-name').value = '';
+  document.getElementById('ap-jp').value   = '';
+  document.getElementById('ap-desc').value = '';
+  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=en')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var name = '';
+      if (data.address) {
+        name = data.address.amenity || data.address.shop || data.address.tourism ||
+               data.address.building || data.address.road || '';
+      }
+      if (!name && data.name) name = data.name;
+      document.getElementById('ap-name').value = name;
+    })
+    .catch(function() {});
+  document.getElementById('add-place-sheet').classList.add('active');
+}
+
+function cancelAddPlace() {
+  document.getElementById('add-place-sheet').classList.remove('active');
+  stopAddPlaceMode();
+  addPlaceLatLng = null;
+}
+
+function saveCustomPlace() {
+  var name = document.getElementById('ap-name').value.trim();
+  if (!name) { alert('Please enter a name for this place.'); return; }
+  if (!addPlaceLatLng) { cancelAddPlace(); return; }
+  var catIcons = { food:'🍜', drink:'🍸', culture:'⛩️', shopping:'🏮', art:'🎨', nature:'🌿', hidden:'🔮' };
+  var cat = document.getElementById('ap-cat').value;
+  var newPlace = {
+    id:        Date.now(),
+    lat:       addPlaceLatLng.lat,
+    lng:       addPlaceLatLng.lng,
+    city:      document.getElementById('ap-city').value,
+    cat:       cat,
+    saved:     true,
+    userAdded: true,
+    name:      name,
+    jp:        document.getElementById('ap-jp').value.trim() || '',
+    desc:      document.getElementById('ap-desc').value.trim() || 'Added by you.',
+    tips:      [],
+    dist: '—', walk: '—',
+    price:     document.getElementById('ap-price').value,
+    icon:      catIcons[cat] || '📍',
+    note: '', visited: false
+  };
+  places.push(newPlace);
+  var stored = lsGet(LS_KEY_CUSTOM, []);
+  stored.push(newPlace);
+  lsSet(LS_KEY_CUSTOM, stored);
+  cancelAddPlace();
+  renderCards();
+  if (mapInstance) renderMapPins();
+  var msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;white-space:nowrap;';
+  msg.textContent = '✓ ' + name + ' added';
+  document.body.appendChild(msg);
+  setTimeout(function(){ if (msg.parentNode) document.body.removeChild(msg); }, 2500);
+}
+
+function deleteCustomPlace(id) {
+  if (!confirm('Remove this place from your list?')) return;
+  places = places.filter(function(p) { return p.id !== id; });
+  var stored = lsGet(LS_KEY_CUSTOM, []).filter(function(p) { return p.id !== id; });
+  lsSet(LS_KEY_CUSTOM, stored);
+  closePanel();
+  renderCards();
+  if (mapInstance) renderMapPins();
+}
+window._deleteCustomPlace = deleteCustomPlace;
 
 // ── EVENT LISTENERS ──
 // City tabs
@@ -1894,6 +2176,16 @@ document.querySelectorAll('.map-cat-pill').forEach(function(p) { p.classList.rem
 pill.classList.add('active');
 renderMapPins();
 });
+
+// EN tile toggle
+document.getElementById('btn-toggle-en').addEventListener('click', toggleEnglishTiles);
+
+// Add place buttons
+document.getElementById('btn-add-place').addEventListener('click', function() {
+  if (addingPlace) { stopAddPlaceMode(); } else { startAddPlaceMode(); }
+});
+document.getElementById('btn-save-place').addEventListener('click', saveCustomPlace);
+document.getElementById('btn-cancel-place').addEventListener('click', cancelAddPlace);
 
 // City tab changes should also update map if open
 var origCityHandler = document.getElementById('city-tabs').onclick;
