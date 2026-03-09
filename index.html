@@ -1193,6 +1193,21 @@ document.addEventListener("DOMContentLoaded", function() {
       desc: 'A vast park in central Nara where over 1,000 sika deer roam freely among ancient temples. The deer are considered sacred messengers of the gods and will bow back if you bow first. Tōdai-ji with its giant Buddha is within the grounds.',
       tips: ['Go early morning before tour buses — magical at 7am with mist in the trees', 'Deer crackers (shika senbei) sold at stalls throughout — buy several packets', 'The deer bow back if you bow to them first — genuine, not a myth'],
       dist: '—', walk: '—', price: 'Free', icon: '🦌'
+    },
+    // ── HOTELS ──
+    {
+      id: 33, lat: 35.6784, lng: 139.7671, city: 'tokyo', cat: 'hotel', saved: true,
+      name: 'Shangri-La Tokyo', jp: 'シャングリ・ラ 東京',
+      desc: 'Five-star hotel occupying the top 11 floors of the Marunouchi Trust Tower, directly above Tokyo Station. Rooms start at the 28th floor — city views are extraordinary. Repeatedly rated Tokyo\'s finest hotel.',
+      tips: ['The Lobby Lounge afternoon tea is a destination in itself', 'The Horizon Club lounge (higher floors) includes breakfast and evening canapés', 'Ask for a room facing the Imperial Palace gardens for the best view'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🏨'
+    },
+    {
+      id: 34, lat: 35.0134, lng: 135.7804, city: 'kyoto', cat: 'hotel', saved: true,
+      name: 'Hotel Okura Kyoto', jp: 'ホテルオークラ京都',
+      desc: 'Landmark five-star hotel in Okazaki, Kyoto\'s museum and garden district. 4.3 stars with nearly 5,000 reviews. Classic Japanese hospitality in a refined, understated style. Walking distance from Heian Shrine.',
+      tips: ['The Japanese restaurant Yamatomi is worth a booking even if not staying', 'The Okazaki location puts you close to Nanzenji and the Philosopher\'s Path', 'Request a garden-view room for the most peaceful outlook'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🏨'
     }
   ];
 
@@ -1355,7 +1370,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var catColours = {
     food: '#e67e22', drink: '#8e44ad', culture: '#c0392b',
     shopping: '#d4a017', art: '#2980b9', nature: '#27ae60',
-    hidden: '#16a085', all: '#1a1410'
+    hidden: '#16a085', hotel: '#34495e', all: '#1a1410'
   };
 
   function makePinSvg(cat, saved) {
