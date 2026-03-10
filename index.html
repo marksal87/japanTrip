@@ -932,6 +932,104 @@ body.map-open { overflow: hidden; }
 /* Crosshair cursor in pick mode */
 #map-container.pick-mode { cursor: crosshair !important; }
 #map-container.pick-mode .leaflet-interactive { cursor: crosshair !important; }
+
+/* ── BROWSE ADD MODAL ── */
+.browse-add-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(20,14,8,0.45);
+  align-items: flex-end;
+  justify-content: center;
+}
+.browse-add-modal.active { display: flex; }
+.browse-add-sheet {
+  width: 100%;
+  max-width: 430px;
+  background: var(--paper);
+  border-radius: 16px 16px 0 0;
+  padding: 18px 20px 44px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.bap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.bap-header h3 { font-family: var(--serif); font-size: 17px; flex: 1; }
+.bap-close-btn, .bap-back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  font-family: var(--sans);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.bap-back-btn { margin-right: 8px; }
+.bap-search-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--card);
+  outline: none;
+  margin-bottom: 10px;
+}
+.bap-search-input:focus { border-color: var(--warm-mid); }
+.bap-status { font-size: 12px; color: var(--muted); margin-bottom: 10px; min-height: 16px; }
+.bap-results { display: flex; flex-direction: column; gap: 8px; }
+.bap-result-item {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.bap-result-item:active { border-color: var(--warm-mid); background: var(--accent-soft); }
+.bap-result-name { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+.bap-result-addr { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.bap-result-type {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.bap-confirm-card {
+  padding: 13px 15px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.bap-confirm-card strong { font-family: var(--serif); font-size: 15px; color: var(--ink); display: block; margin-bottom: 3px; }
+.bap-confirm-card span { font-size: 12px; color: var(--muted); }
+.btn-browse-add {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px dashed var(--warm-mid);
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
 </style>
 
 </head>
@@ -1076,11 +1174,69 @@ body.map-open { overflow: hidden; }
 
 <div class="sort-bar">
   <div class="sort-label" id="cards-count">Showing 0 places</div>
+  <button class="btn-browse-add" id="btn-browse-add">＋ Add a place</button>
   <select class="sort-select" id="sort-select">
     <option value="list">My list first</option>
     <option value="name">A → Z</option>
     <option value="cat">By category</option>
   </select>
+</div>
+
+<!-- Browse: Add Place by Search Modal -->
+<div class="browse-add-modal" id="browse-add-modal">
+  <div class="browse-add-sheet">
+    <!-- Search view -->
+    <div id="bap-search-view">
+      <div class="bap-header">
+        <h3>Find a place</h3>
+        <button class="bap-close-btn" id="bap-close">✕</button>
+      </div>
+      <input class="bap-search-input" type="search" id="bap-input"
+             placeholder="e.g. Bar Centifolio Kyoto" autocomplete="off">
+      <div class="bap-status" id="bap-status"></div>
+      <div class="bap-results" id="bap-results"></div>
+    </div>
+    <!-- Confirm view -->
+    <div id="bap-confirm-view" style="display:none;">
+      <div class="bap-header">
+        <button class="bap-back-btn" id="bap-back">← Back</button>
+        <h3>Confirm place</h3>
+        <button class="bap-close-btn" id="bap-close2">✕</button>
+      </div>
+      <div class="bap-confirm-card" id="bap-confirm-card"></div>
+      <div class="add-place-field">
+        <label>Name</label>
+        <input type="text" id="bap-name">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="add-place-field" style="flex:1;">
+          <label>Category</label>
+          <select id="bap-cat">
+            <option value="food">🍜 Food</option>
+            <option value="drink">🍸 Drink</option>
+            <option value="culture">⛩️ Culture</option>
+            <option value="shopping">🏮 Shopping</option>
+            <option value="art">🎨 Art</option>
+            <option value="nature">🌿 Nature</option>
+            <option value="hidden">🔮 Hidden</option>
+          </select>
+        </div>
+        <div class="add-place-field" style="flex:1;">
+          <label>Price</label>
+          <select id="bap-price">
+            <option value="Free">Free</option>
+            <option value="¥">¥</option>
+            <option value="¥¥">¥¥</option>
+            <option value="¥¥¥">¥¥¥</option>
+          </select>
+        </div>
+      </div>
+      <div class="add-place-actions">
+        <button class="btn-cancel-place" id="bap-btn-cancel">Cancel</button>
+        <button class="btn-save-place" id="bap-btn-save">Add to my list</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="section-head">
@@ -1905,6 +2061,155 @@ text.innerHTML = html;
 box.style.display = 'block';
 }
 
+// ── BROWSE ADD PLACE BY SEARCH ──
+var bapSelectedPlace = null;
+var bapSearchTimer   = null;
+
+function openBrowseAddSheet() {
+  document.getElementById('browse-add-modal').classList.add('active');
+  document.getElementById('bap-search-view').style.display = '';
+  document.getElementById('bap-confirm-view').style.display = 'none';
+  document.getElementById('bap-input').value = '';
+  document.getElementById('bap-results').innerHTML = '';
+  document.getElementById('bap-status').textContent = '';
+  bapSelectedPlace = null;
+  setTimeout(function() { document.getElementById('bap-input').focus(); }, 120);
+}
+
+function closeBrowseAddSheet() {
+  document.getElementById('browse-add-modal').classList.remove('active');
+  bapSelectedPlace = null;
+  if (bapSearchTimer) clearTimeout(bapSearchTimer);
+}
+
+function guessCatFromNominatim(result) {
+  var type = (result.type || '').toLowerCase();
+  var cls  = (result.class || '').toLowerCase();
+  var foodTypes = ['restaurant','cafe','fast_food','food_court','bakery','sushi','ramen','izakaya','kaiseki'];
+  var drinkTypes = ['bar','pub','nightclub','brewery','sake'];
+  var cultureTypes = ['temple','shrine','museum','castle','historic','place_of_worship','memorial','ruins'];
+  var natureTypes = ['park','garden','forest','nature_reserve','viewpoint','waterfall','hot_spring'];
+  var artTypes = ['art_gallery','theatre','cinema','arts_centre'];
+  var shopTypes = ['marketplace','mall','supermarket','department_store'];
+  if (foodTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'food';
+  if (drinkTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'drink';
+  if (cultureTypes.some(function(t){ return type.indexOf(t)!==-1 || cls.indexOf(t)!==-1; })) return 'culture';
+  if (natureTypes.some(function(t){ return type.indexOf(t)!==-1 || cls.indexOf(t)!==-1; })) return 'nature';
+  if (artTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'art';
+  if (cls === 'shop' || shopTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'shopping';
+  return 'hidden';
+}
+
+function guessCityFromAddress(address) {
+  if (!address) return state.city !== 'all' ? state.city : 'kyoto';
+  var city = (address.city || address.town || address.county || '').toLowerCase();
+  if (city.indexOf('tokyo') !== -1) return 'tokyo';
+  if (city.indexOf('osaka') !== -1) return 'osaka';
+  if (city.indexOf('nara')  !== -1) return 'nara';
+  if (city.indexOf('kyoto') !== -1) return 'kyoto';
+  return state.city !== 'all' ? state.city : 'kyoto';
+}
+
+function doNominatimSearch(q) {
+  if (q.length < 2) {
+    document.getElementById('bap-results').innerHTML = '';
+    document.getElementById('bap-status').textContent = '';
+    return;
+  }
+  document.getElementById('bap-status').textContent = 'Searching…';
+  document.getElementById('bap-results').innerHTML = '';
+  // Bias toward Japan but don't force it (user may have typed the city already)
+  var url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
+            '&countrycodes=jp&format=json&limit=6&accept-language=en&addressdetails=1&extratags=1';
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      if (!results.length) {
+        document.getElementById('bap-status').textContent = 'No results — try adding the city name.';
+        return;
+      }
+      document.getElementById('bap-status').textContent = results.length + ' result' + (results.length !== 1 ? 's' : '') + ' — tap one to confirm';
+      document.getElementById('bap-results').innerHTML = results.map(function(r, i) {
+        var name = r.name || r.display_name.split(',')[0];
+        var addr = r.address || {};
+        var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+        var typeLabel = (r.type || r.class || '').replace(/_/g, ' ');
+        return '<div class="bap-result-item" data-idx="' + i + '">' +
+          '<div class="bap-result-name">' + name + '</div>' +
+          (addrStr ? '<div class="bap-result-addr">' + addrStr + '</div>' : '') +
+          (typeLabel ? '<span class="bap-result-type">' + typeLabel + '</span>' : '') +
+          '</div>';
+      }).join('');
+      // attach click handlers
+      document.getElementById('bap-results').querySelectorAll('.bap-result-item').forEach(function(el) {
+        el.addEventListener('click', function() {
+          selectNominatimResult(results[parseInt(el.dataset.idx)]);
+        });
+      });
+    })
+    .catch(function() {
+      document.getElementById('bap-status').textContent = 'Search failed — check your connection.';
+    });
+}
+
+function selectNominatimResult(result) {
+  bapSelectedPlace = result;
+  var addr = result.address || {};
+  var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+  var name = result.name || result.display_name.split(',')[0];
+  var typeLabel = (result.type || result.class || '').replace(/_/g, ' ');
+  // Build confirm card
+  document.getElementById('bap-confirm-card').innerHTML =
+    '<strong>' + name + '</strong>' +
+    '<span>' + [addrStr, typeLabel].filter(Boolean).join(' · ') + '</span>';
+  // Pre-fill editable fields
+  document.getElementById('bap-name').value = name;
+  document.getElementById('bap-cat').value = guessCatFromNominatim(result);
+  document.getElementById('bap-price').value = 'Free';
+  // Switch to confirm view
+  document.getElementById('bap-search-view').style.display = 'none';
+  document.getElementById('bap-confirm-view').style.display = '';
+}
+
+function saveBrowsePlace() {
+  if (!bapSelectedPlace) return;
+  var name = document.getElementById('bap-name').value.trim();
+  if (!name) { alert('Please enter a name.'); return; }
+  var catIcons = { food:'🍜', drink:'🍸', culture:'⛩️', shopping:'🏮', art:'🎨', nature:'🌿', hidden:'🔮' };
+  var cat  = document.getElementById('bap-cat').value;
+  var addr = bapSelectedPlace.address || {};
+  var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+  var newPlace = {
+    id:        Date.now(),
+    lat:       parseFloat(bapSelectedPlace.lat),
+    lng:       parseFloat(bapSelectedPlace.lon),
+    city:      guessCityFromAddress(addr),
+    cat:       cat,
+    saved:     true,
+    userAdded: true,
+    name:      name,
+    jp:        '',
+    desc:      addrStr || 'Added by you.',
+    tips:      [],
+    dist: '—', walk: '—',
+    price:     document.getElementById('bap-price').value,
+    icon:      catIcons[cat] || '📍',
+    note: '', visited: false
+  };
+  places.push(newPlace);
+  var stored = lsGet(LS_KEY_CUSTOM, []);
+  stored.push(newPlace);
+  lsSet(LS_KEY_CUSTOM, stored);
+  closeBrowseAddSheet();
+  renderCards();
+  if (mapInstance) renderMapPins();
+  var msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;white-space:nowrap;';
+  msg.textContent = '✓ ' + name + ' added to your places';
+  document.body.appendChild(msg);
+  setTimeout(function(){ if (msg.parentNode) document.body.removeChild(msg); }, 2500);
+}
+
 // ── TILE TOGGLE ──
 function toggleEnglishTiles() {
   mapTileEN = !mapTileEN;
@@ -2179,6 +2484,26 @@ renderMapPins();
 
 // EN tile toggle
 document.getElementById('btn-toggle-en').addEventListener('click', toggleEnglishTiles);
+
+// Browse add place
+document.getElementById('btn-browse-add').addEventListener('click', openBrowseAddSheet);
+document.getElementById('bap-close').addEventListener('click', closeBrowseAddSheet);
+document.getElementById('bap-close2').addEventListener('click', closeBrowseAddSheet);
+document.getElementById('bap-back').addEventListener('click', function() {
+  document.getElementById('bap-search-view').style.display = '';
+  document.getElementById('bap-confirm-view').style.display = 'none';
+  bapSelectedPlace = null;
+});
+document.getElementById('browse-add-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeBrowseAddSheet();
+});
+document.getElementById('bap-input').addEventListener('input', function() {
+  var q = this.value.trim();
+  if (bapSearchTimer) clearTimeout(bapSearchTimer);
+  bapSearchTimer = setTimeout(function() { doNominatimSearch(q); }, 450);
+});
+document.getElementById('bap-btn-save').addEventListener('click', saveBrowsePlace);
+document.getElementById('bap-btn-cancel').addEventListener('click', closeBrowseAddSheet);
 
 // Add place buttons
 document.getElementById('btn-add-place').addEventListener('click', function() {
