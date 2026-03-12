@@ -44,7 +44,7 @@ top: 0;
 z-index: 100;
 background: var(--paper);
 border-bottom: 1px solid var(--border);
-padding: 14px 20px 10px;
+padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px;
 }
 
 .header-top {
@@ -451,6 +451,34 @@ text-transform: capitalize;
 
 .badge-cat { background: var(--accent-soft); color: #7a4a30; }
 .badge-saved { background: #dff0e4; color: #2d6a4f; }
+.badge-visited { background: #e0f2e9; color: #1a6640; }
+
+.place-card.visited { border-left: 3px solid #27ae60; opacity: 0.82; }
+
+/* VISIT FILTER STRIP */
+.visit-filter-strip {
+padding: 0 20px 10px;
+display: flex;
+gap: 6px;
+}
+.visit-pill {
+flex-shrink: 0;
+padding: 5px 12px;
+border-radius: 20px;
+border: 1px solid var(--border);
+background: var(--card);
+font-size: 12px;
+font-weight: 500;
+color: var(--muted);
+cursor: pointer;
+font-family: var(--sans);
+white-space: nowrap;
+}
+.visit-pill.active {
+background: var(--ink);
+color: var(--paper);
+border-color: var(--ink);
+}
 
 .card-desc {
 font-size: 13px;
@@ -750,7 +778,7 @@ flex-direction: column;
 position: absolute;
 top: 0; left: 0; right: 0;
 z-index: 1000;
-padding: 52px 12px 10px;
+padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 10px;
 pointer-events: none;
 }
 
@@ -1237,6 +1265,12 @@ body.map-open { overflow: hidden; }
       </div>
     </div>
   </div>
+</div>
+
+<div class="visit-filter-strip" id="visit-filter-strip">
+  <button class="visit-pill active" data-filter="all">All</button>
+  <button class="visit-pill" data-filter="unvisited">Not visited</button>
+  <button class="visit-pill" data-filter="visited">✓ Visited</button>
 </div>
 
 <div class="section-head">
@@ -2072,12 +2106,15 @@ document.addEventListener("DOMContentLoaded", function() {
     hidden: '#16a085', hotel: '#34495e', all: '#1a1410'
   };
 
-  function makePinSvg(cat, saved) {
+  function makePinSvg(cat, saved, visited) {
     var col = catColours[cat] || catColours.all;
     var ring = saved ? 'stroke="#2d6a4f" stroke-width="2"' : '';
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">' +
+    var opacity = visited ? ' opacity="0.5"' : '';
+    var check = visited ? '<path d="M9 13.5l3 3 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' : '';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36"' + opacity + '>' +
       '<path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.27 21.73 0 14 0z" fill="' + col + '" ' + ring + '/>' +
       '<circle cx="14" cy="14" r="6" fill="rgba(255,255,255,0.9)"/>' +
+      check +
       '</svg>';
   }
 
@@ -2113,7 +2150,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     filtered.forEach(function(p) {
       var icon = L.divIcon({
-        html: makePinSvg(p.cat, p.saved),
+        html: makePinSvg(p.cat, p.saved, p.visited),
         className: '',
         iconSize: [28, 36],
         iconAnchor: [14, 36],
@@ -2156,8 +2193,20 @@ document.addEventListener("DOMContentLoaded", function() {
     document.body.classList.remove('map-open');
   }
 
+  // ── TRIP DAY COUNTER ──
+  (function() {
+    var TRIP_START = new Date('2026-03-11T00:00:00');
+    var TRIP_END   = new Date('2026-03-19T00:00:00');
+    var TRIP_TOTAL = Math.round((TRIP_END - TRIP_START) / 86400000) + 1;
+    var today0 = new Date(); today0.setHours(0,0,0,0);
+    var dayNum = Math.round((today0 - TRIP_START) / 86400000) + 1;
+    dayNum = Math.max(1, Math.min(dayNum, TRIP_TOTAL));
+    var el = document.getElementById('trip-days');
+    if (el) el.textContent = 'Day ' + dayNum + ' of ' + TRIP_TOTAL;
+  })();
+
   // ── STATE ──
-  var state = { city: 'kyoto', cat: 'all', search: '', sort: 'list' };
+  var state = { city: 'kyoto', cat: 'all', search: '', sort: 'list', visitFilter: 'all' };
 
   // ── RENDER NEARBY ──
   function renderNearby() {
@@ -2204,6 +2253,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var filtered = places.filter(function(p) {
       if (state.city !== 'all' && p.city !== state.city) return false;
       if (state.cat !== 'all' && p.cat !== state.cat) return false;
+      if (state.visitFilter === 'visited' && !p.visited) return false;
+      if (state.visitFilter === 'unvisited' && p.visited) return false;
       if (state.search) {
         var q = state.search.toLowerCase();
         if (p.name.toLowerCase().indexOf(q) === -1 &&
@@ -2232,7 +2283,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     list.innerHTML = filtered.map(function(p) {
-      return '<div class="place-card" data-id="' + p.id + '">' +
+      return '<div class="place-card' + (p.visited ? ' visited' : '') + '" data-id="' + p.id + '">' +
         '<div class="card-inner">' +
           '<div class="card-top">' +
             '<div>' +
@@ -2241,7 +2292,7 @@ document.addEventListener("DOMContentLoaded", function() {
             '</div>' +
             '<div class="card-badges">' +
               '<span class="badge badge-cat">' + p.cat + '</span>' +
-              (p.saved ? '<span class="badge badge-saved">✓ on list</span>' : '') +
+              (p.visited ? '<span class="badge badge-visited">✓ visited</span>' : (p.saved ? '<span class="badge badge-saved">★ on list</span>' : '')) +
             '</div>' +
           '</div>' +
           '<div class="card-desc">' + p.desc.substring(0, 115) + '…</div>' +
@@ -2409,18 +2460,230 @@ showPanel();
 
 }
 
+// ── DEEP DIVE CONTENT ──
+var _guideContent = {
+  march: function() {
+    return backBtn() +
+    '<div class="panel-name">🌸 March in Japan</div>' +
+    '<p style="font-size:13px;line-height:1.65;color:#3a2d20;margin:6px 0 14px;">March 11–19 lands at the very start of cherry blossom season — one of the best windows of the year.</p>' +
+    h('Cherry Blossom Timing') +
+    p('Tokyo typically peaks <strong>March 28–April 5</strong>; Kyoto follows by 3–5 days. On your trip you\'ll see early blooms in Tokyo and late buds in Kyoto — the opening act rather than peak. Still beautiful, and far less crowded than full bloom.') +
+    p('<strong>Best early-bloom spots:</strong> Nakameguro canal (Tokyo), Shinjuku Gyoen\'s early-flowering varieties, Maruyama Park (Kyoto).') +
+    h('Weather') +
+    p('Expect 8–16°C. Mornings are cold — layer up. Rain is frequent in mid-March; carry a compact umbrella at all times. The combination of rain and early blossoms is actually very beautiful.') +
+    h('What to Wear') +
+    p('Light jacket + a warm mid-layer. Comfortable walking shoes (expect 12–18km per day). Slip-on shoes make temple visits easier — avoids untying laces at every entrance.') +
+    h('March Highlights') +
+    tips([
+      'Todai-ji <strong>Omizutori</strong> (water-drawing ceremony) at Nigatsu-do, Nara — runs until March 14. Rare and atmospheric torch procession at dusk.',
+      'Plum blossoms may still be out at the start of your trip in Kyoto\'s gardens.',
+      '<strong>White Day</strong> (March 14) — men give gifts in return for Valentine\'s. Confectionery shops go all out with elaborate displays.'
+    ]);
+  },
+  tokyo: function() {
+    return backBtn() +
+    '<div class="panel-name">🗼 Tokyo</div>' +
+    h('Neighbourhoods') +
+    p('<strong>Marunouchi / Ginza</strong> — Your base (Shangri-La is here). Financial district by day; outstanding restaurants and bars by night. Ginza is Tokyo\'s most serious address for food, drinks, and fashion.') +
+    p('<strong>Shinjuku</strong> — Tokyo\'s busiest hub. East side: Kabukicho nightlife, Golden-Gai bars, Isetan. West side: skyscrapers and the Park Hyatt.') +
+    p('<strong>Omotesando / Harajuku</strong> — The fashion axis. Zelkova-lined Omotesando for luxury; Takeshita Street one block north for wild youth culture. 15 minutes\' walk connects them.') +
+    p('<strong>Nakameguro</strong> — Canal walk, specialty coffee, design boutiques, excellent restaurants. Cherry blossom here in late March is among the best in Tokyo.') +
+    p('<strong>Shibuya</strong> — The scramble crossing, Scramble Square rooftop views, shopping toward Daikanyama. More interesting in the residential backstreets than on the main drag.') +
+    p('<strong>Asakusa</strong> — Old Tokyo. Senso-ji, rickshaws, craft shops. Completely different energy from modern Tokyo — feels closest to Edo-era Japan.') +
+    p('<strong>Yanaka</strong> — Survived WW2 bombing intact. Shotengai shopping street, a beautiful cemetery, cats everywhere. The real Tokyo underneath the modern city.') +
+    h('Getting Around') +
+    tips([
+      '<strong>Suica/Pasmo IC card:</strong> Tap in and out on every train, bus, and most convenience stores. Buy at airport arrivals or any JR station. iPhone users: add to Apple Pay.',
+      '<strong>Yamanote Line</strong> (green loop): Connects Shinjuku, Shibuya, Harajuku, Ueno, Akihabara, Tokyo Station every 2–4 minutes.',
+      '<strong>Tokyo Metro + Toei:</strong> Covers everything the Yamanote doesn\'t. 24h/48h Metro passes available at airports and major stations.',
+      '<strong>Walking is underused</strong> — Omotesando to Shibuya is 15 min on foot through excellent streets. Many sights are closer than they appear on the map.',
+      '<strong>Taxi:</strong> DiDi and Uber operate. Expensive but reliable after midnight. Always have your destination in Japanese to show the driver.'
+    ]) +
+    h('Food Culture') +
+    tips([
+      '<strong>Ramen:</strong> Tokyo style is shoyu (soy) or shio (salt) — light, clean broths unlike Kyushu tonkotsu. Afuri\'s yuzu shio is the essential bowl.',
+      '<strong>Sushi etiquette:</strong> Eat nigiri in one bite. Fingers are fine at most counters. At omakase spots, trust the chef\'s selection entirely — don\'t ask to swap.',
+      '<strong>Standing bars (tachinomi):</strong> Yurakucho under the elevated tracks has Tokyo\'s best-value izakayas. Salarymen crowd in after 6pm.',
+      '<strong>Konbini:</strong> 7-Eleven, Lawson, FamilyMart have genuinely good food — fresh onigiri, katsu sandwiches, hot oden, excellent coffee. Non-optional Tokyo experience.',
+      '<strong>Kissaten</strong> (old-school cafés): Hundreds of untouched 1960s–70s coffee shops with thick coffee and retro interiors. Worth seeking out over Starbucks.'
+    ]) +
+    h('Etiquette') +
+    tips([
+      'No eating or drinking while walking (exception: festival street food stalls)',
+      'Stand on the <strong>left</strong> side of escalators in Tokyo (reversed in Osaka — right side)',
+      'Queue at the painted marks on train platforms; let passengers off before boarding',
+      'Remove shoes at ryokan, temple interiors, and many traditional restaurants. Slip-ons help.',
+      'Cash still widely used — carry ¥10,000–20,000 at all times even if you\'re a card person'
+    ]);
+  },
+  kyoto: function() {
+    return backBtn() +
+    '<div class="panel-name">⛩️ Kyoto</div>' +
+    h('Neighbourhoods') +
+    p('<strong>Higashiyama</strong> — The prime historic belt running north–south. Kiyomizudera at the south, Gion/Hanamikoji in the middle, Philosopher\'s Path and Nanzenji at the north. Two full days here isn\'t excessive.') +
+    p('<strong>Gion</strong> — Preserved machiya townhouses, ochaya teahouses, Hanamikoji at dusk. Photography of real geisha requires distance and discretion — enforce this on yourself.') +
+    p('<strong>Fushimi</strong> — South Kyoto, dominated by Fushimi Inari. Worth a dedicated morning — go before 7am for the tunnel gates without crowds.') +
+    p('<strong>Arashiyama</strong> — Western mountains. Bamboo grove, Tenryu-ji garden, Hozu river gorge, Monkey Park. A self-contained half-day.') +
+    p('<strong>Philosopher\'s Path</strong> — The 2km canal walk between Ginkaku-ji and Nanzenji through a quiet neighbourhood of cafés and galleries. Early cherry blossoms arch over it in late March.') +
+    p('<strong>Nishiki / Downtown</strong> — Central Kyoto with Nishiki Market, Pontocho, and the main shopping streets. Where most evening restaurants and activity concentrate.') +
+    h('Getting Around') +
+    tips([
+      '<strong>Bus:</strong> The primary way to reach most sights. IC card works. Route 100 (Gion → Kiyomizudera → Arashiyama), Route 205 (Kinkaku-ji loop). Buses get very crowded in peak season.',
+      '<strong>JR Kyoto Station</strong> is the main hub: Sagano Line to Arashiyama, Nara Line to Fushimi Inari and Nara, Shinkansen south to Osaka.',
+      '<strong>Bicycle rental</strong> (¥1,000–1,500/day): Kyoto is mostly flat — cycling between Higashiyama temples is excellent. Many shops near Kyoto Station.',
+      '<strong>Orientation:</strong> Streets form a grid. North points toward the mountains (Higashiyama and Arashiyama); south toward Fushimi. East is the hills; west is the bamboo grove country.'
+    ]) +
+    h('Food Culture') +
+    tips([
+      '<strong>Kaiseki:</strong> Kyoto\'s defining cuisine — seasonal multi-course meals with near-monastic presentation. Budget ¥10,000–30,000. Kikunoi Honten is a once-in-a-trip meal.',
+      '<strong>Tofu (kyo-tofu):</strong> Silkier and more delicate than anywhere else. Try yudofu (simmered tofu) at a restaurant near Nanzenji temple.',
+      '<strong>Matcha:</strong> Everything is matcha. Ippodo on Teramachi is the definitive tea shop — sit in the Kaboku tearoom and taste before buying.',
+      '<strong>Obanzai:</strong> Kyoto\'s version of small plates — seasonal vegetables, tofu, preserved foods. Many izakayas and lunch spots serve it as a set.',
+      'Reserve restaurants 3–4 weeks ahead even for lunch. Many high-end places list on Tableall (English available) or Omakase.'
+    ]) +
+    h('Kyoto-Specific Notes') +
+    tips([
+      'Photography of geisha in Gion is increasingly enforced — keep your distance and never obstruct their path',
+      'Many temples prohibit photography inside specific halls. Follow posted signs; don\'t rely on others ignoring them.',
+      'The Philosopher\'s Path and Hanamikoji are both at their most beautiful in the morning — the afternoon crowds are significantly heavier.'
+    ]);
+  },
+  osaka: function() {
+    return backBtn() +
+    '<div class="panel-name">🦑 Osaka</div>' +
+    h('Neighbourhoods') +
+    p('<strong>Namba / Dotonbori</strong> — The entertainment core. Neon signs, canal, takoyaki and okonomiyaki stalls, the Glico Running Man. Best after dark; daytime is enjoyable but the night energy is the point.') +
+    p('<strong>Shinsaibashi</strong> — Shopping district immediately north of Namba. Covered arcade runs 600m to Namba; better boutiques further north toward Minami-Horie and Kitahorie.') +
+    p('<strong>Shinsekai</strong> — Retro 1912 district around Tsutenkaku tower. Kushikatsu restaurants, pachinkos, unvarnished working-class charm. Deliberately unglamorous and better for it.') +
+    p('<strong>Umeda</strong> — North Osaka\'s modern hub. Shopping malls, Umeda Sky Building, and a vast underground dining labyrinth beneath Osaka Station.') +
+    p('<strong>Hozenji Yokocho</strong> — A tiny lantern-lit alley near Dotonbori, centred on a moss-draped Fudo Myoo statue. Atmospheric old-school Osaka.') +
+    p('<strong>Nakanoshima</strong> — Museum island between two canals. National Museum of Art, Nakanoshima Park — good for a quiet afternoon away from Namba.') +
+    h('Getting Around') +
+    tips([
+      '<strong>Osaka Metro (Midosuji Line — red):</strong> Connects Umeda, Shinsaibashi, Namba, and Tennoji. Extremely efficient; IC card works everywhere.',
+      '<strong>Three Nambas:</strong> "Namba" (Metro), "Osaka-Namba" (Kintetsu/Hanshin), and "JR Namba" are three different stations in the same area. Know which you need before you leave.',
+      '<strong>Day trips:</strong> Kyoto is 15 min by Shinkansen or 75 min by Hankyu express. Nara is 35 min by Kintetsu express from Namba.',
+      '<strong>Escalators:</strong> Stand on the RIGHT in Osaka — walk on the left. Opposite to Tokyo. Locals notice if you get this wrong.'
+    ]) +
+    h('Food Culture') +
+    tips([
+      '<strong>Takoyaki:</strong> Small octopus balls in batter — the defining Osaka street food. Order 8 or 12; eat immediately while molten inside. Blow on each one.',
+      '<strong>Okonomiyaki (Osaka/Kansai style):</strong> All ingredients mixed together, unlike Hiroshima-style which is layered — they\'re completely different dishes. Cooked on a teppan at your table.',
+      '<strong>Kushikatsu:</strong> Deep-fried skewers in Shinsekai. <em>Never double-dip</em> the communal sauce. This is enforced seriously — honour it absolutely.',
+      '<strong>Kuidaore</strong> ("eat yourself bankrupt"): The Osaka philosophy. Food quality is very high at every price point. Budget generously — you\'ll want to keep eating.',
+      '<strong>Prices</strong> are noticeably lower than Tokyo for food and drink — roughly 20–30% cheaper for comparable quality.'
+    ]) +
+    h('Osaka Character') +
+    p('Osaka people are famously more approachable and warm than Tokyo — conversations with strangers happen naturally, service is more relaxed, and the city wears its personality openly. You\'ll likely feel more immediately at ease here.');
+  },
+  nara: function() {
+    return backBtn() +
+    '<div class="panel-name">🦌 Nara</div>' +
+    h('Getting There') +
+    p('<strong>From Kyoto:</strong> JR Nara Line from Kyoto Station to JR Nara (45 min, ~¥720). Or Kintetsu Kyoto Line from Kintetsu-Kyoto Station to Kintetsu Nara (35 min, ¥760 express) — deposits you closer to the deer park.') +
+    p('<strong>From Osaka:</strong> Kintetsu from Osaka Namba direct to Kintetsu Nara (35 min express, ~¥560). Most convenient from Osaka.') +
+    h('The Deer') +
+    tips([
+      'Deer crackers (shika senbei) sold at stalls throughout the park for ¥200–250/pack. Buy several — they go fast.',
+      'Deer will bow if you bow to them first — it\'s a real learned behaviour (food expectation), and genuinely delightful.',
+      'Store crackers in your outer pocket when not actively feeding; deer smell food in bags and will head-butt or nip to get it.',
+      'Best before 9am — morning mist through the trees with deer moving quietly through it approaches the sublime.'
+    ]) +
+    h('Beyond the Park') +
+    tips([
+      '<strong>Naramachi</strong> — the merchant district south of the park. Preserved machiya townhouses with small cafés, craft shops, and sake makers. Far quieter and more intimate than the park area.',
+      '<strong>Nigatsu-do</strong> — a sub-temple behind Todai-ji reached via stone steps. Elevated verandah with panoramic views over the park and city below. Almost always uncrowded.',
+      '<strong>Yoshiki-en Garden</strong> — adjacent to Isui-en, free entry for foreign visitors with passport. Often completely empty even in peak season. The moss garden is exceptional.',
+      '<strong>Gangō-ji</strong> — Japan\'s oldest Buddhist temple (593 AD), tucked into Naramachi. Crumbling and atmospheric. Usually have it entirely to yourself.'
+    ]) +
+    h('Day Trip Logistics') +
+    p('Budget 5–6 hours for a satisfying visit. All main sights are within 1.5km of either station — very walkable. Bicycle rental available near both stations (~¥1,000/day) if you want more range.');
+  },
+  practical: function() {
+    return backBtn() +
+    '<div class="panel-name">🧳 Practical Tips</div>' +
+    h('Money & Payments') +
+    tips([
+      'Japan remains heavily cash-based. Always carry ¥10,000–20,000. Many temples, small restaurants, and market stalls are cash only.',
+      '<strong>7-Eleven ATMs</strong> reliably accept international Visa and Mastercard. Japan Post ATMs also work. Convenience store ATMs are the safest bet — avoid bank ATMs with limited hours.',
+      '<strong>Suica/Pasmo IC card:</strong> Load cash and tap everywhere — trains, buses, taxis, convenience stores, many restaurants. iPhone: add to Apple Pay at home before you fly.',
+      '<strong>Tax-free shopping:</strong> Available on purchases over ¥5,000 with your passport. Department stores and electronics shops handle it efficiently — show passport at register.'
+    ]) +
+    h('Connectivity') +
+    tips([
+      'Pocket WiFi or data SIM available at airport arrivals (IIJ, Sakura, KLOOK). eSIM from Airalo or IIJ is convenient if your phone supports it — easiest to arrange before departure.',
+      'Free WiFi at 7-Eleven, FamilyMart, Starbucks, most JR stations. Not reliable at temples or shrines.'
+    ]) +
+    h('Language & Navigation') +
+    tips([
+      '<strong>Google Translate camera:</strong> Point at any menu or sign for instant translation. Download the Japanese language pack offline <em>before arrival</em>.',
+      'Useful phrases: <em>sumimasen</em> (excuse me/sorry), <em>arigatou gozaimasu</em> (thank you), <em>kore wo kudasai</em> (this one please — while pointing at a menu).',
+      'Hand gestures for numbers 1–5 are universally understood for ordering — hold fingers upright facing the person.',
+      'Google Maps works excellently for transit directions in Japan and is more reliable for walking routes than Japanese local apps.'
+    ]) +
+    h('Onsen Etiquette') +
+    tips([
+      'Full shower required before entering any bath — use the seated wash stations and wash hair too.',
+      'Tattoos are prohibited at most onsen. <strong>Spa World (Osaka)</strong> is a notable exception — explicitly tattoo-friendly.',
+      'No swimwear — traditional onsen are nude and gender-separated. Tie up long hair. Keep the small hand towel out of the water.',
+      'Temperature typically 40–43°C. Start with a cooler bath to acclimatise. Stay 10–15 min per bath and drink water between sessions.'
+    ]) +
+    h('Emergencies') +
+    p('<strong>110</strong> Police · <strong>119</strong> Ambulance/Fire · Japan is extremely safe — standard urban awareness is sufficient. Pharmacies (薬局): Matsumoto Kiyoshi chain, well-stocked and staff often speak some English.');
+  }
+};
+
+function backBtn() {
+  return '<button class="guide-back" style="margin-bottom:14px;background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;padding:0;font-family:var(--sans);">← Back</button>';
+}
+function h(t) {
+  return '<div class="panel-section-title" style="margin-top:16px;">' + t + '</div>';
+}
+function p(t) {
+  return '<p style="font-size:13px;line-height:1.65;color:#3a2d20;margin-bottom:6px;">' + t + '</p>';
+}
+function tips(items) {
+  return '<ul style="list-style:none;margin-bottom:2px;">' +
+    items.map(function(t) {
+      return '<li style="font-size:13px;color:#5a3a25;padding:3px 0 3px 16px;position:relative;line-height:1.45;">' +
+        '<span style="position:absolute;left:0;color:var(--accent);">→</span>' + t + '</li>';
+    }).join('') + '</ul>';
+}
+
+function showCityGuide(city) {
+  var content = document.getElementById('panel-content');
+  if (!content || !_guideContent[city]) return;
+  content.innerHTML = _guideContent[city]();
+  content.querySelector('.guide-back').addEventListener('click', function() {
+    showResearchPanel();
+  });
+  content.scrollTop = 0;
+}
+
 // ── RESEARCH PANEL ──
 function showResearchPanel() {
 var content = document.getElementById('panel-content');
 if (!content) return;
 content.innerHTML =
-'<div class="panel-name">📖 Deep Dive</div>' +
-'<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 16px;">Comprehensive offline guides — neighbourhoods, transport, food culture, customs, and seasonal tips.</p>' +
-['Tokyo', 'Kyoto', 'Osaka'].map(function(c) {
-return '<div class="research-card"><h3>' + c + '</h3>' +
-'<p>Neighbourhoods · Transport · Customs · Food culture · Seasonal tips · Etiquette</p></div>';
-}).join('') +
-'<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;text-align:center;">Full research content will be loaded here once Claude generates it.</p>';
+  '<div class="panel-name">📖 Deep Dive</div>' +
+  '<p style="font-size:13px;color:var(--muted);line-height:1.6;margin:6px 0 16px;">Offline guides for your trip — tap a card to read.</p>' +
+  '<div class="research-card" data-city="march" style="background:linear-gradient(135deg,#fff8f0,#fde8d8);border-color:var(--warm-mid);">' +
+    '<h3>🌸 March in Japan</h3>' +
+    '<p>Cherry blossom timing · Weather · Events this week</p>' +
+  '</div>' +
+  '<div class="research-card" data-city="tokyo"><h3>🗼 Tokyo</h3>' +
+    '<p>Neighbourhoods · Transport · Food culture · Etiquette</p></div>' +
+  '<div class="research-card" data-city="kyoto"><h3>⛩️ Kyoto</h3>' +
+    '<p>Higashiyama · Gion · Arashiyama · Kaiseki · Getting around</p></div>' +
+  '<div class="research-card" data-city="osaka"><h3>🦑 Osaka</h3>' +
+    '<p>Namba · Shinsekai · Kuidaore food culture · Getting around</p></div>' +
+  '<div class="research-card" data-city="nara"><h3>🦌 Nara</h3>' +
+    '<p>Getting there · Deer park · Naramachi · Day trip logistics</p></div>' +
+  '<div class="research-card" data-city="practical"><h3>🧳 Practical Tips</h3>' +
+    '<p>Cash · Connectivity · Language · Onsen etiquette · Emergencies</p></div>';
+content.querySelectorAll('.research-card[data-city]').forEach(function(el) {
+  el.addEventListener('click', function() { showCityGuide(el.dataset.city); });
+});
 showPanel();
 }
 
@@ -2842,6 +3105,16 @@ else if (tab === 'saved') { hideMapView();
   showPanel();
 }
 
+});
+
+// Visit filter strip
+document.getElementById('visit-filter-strip').addEventListener('click', function(e) {
+  var pill = e.target.closest('.visit-pill');
+  if (!pill) return;
+  state.visitFilter = pill.dataset.filter;
+  document.querySelectorAll('.visit-pill').forEach(function(p) { p.classList.remove('active'); });
+  pill.classList.add('active');
+  renderCards();
 });
 
 // Map category strip
