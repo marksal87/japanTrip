@@ -836,6 +836,200 @@ text-align: center;
 
 /* Override body scroll when map is open */
 body.map-open { overflow: hidden; }
+
+/* ── MAP ACTION ROW ── */
+.map-action-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+  pointer-events: all;
+}
+.map-action-btn {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+.map-action-btn.en-active { background: #2d6a4f; color: white; }
+
+/* Add-place banner */
+.add-place-banner {
+  display: none;
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-top: 4px;
+  pointer-events: all;
+}
+.add-place-banner.active { display: block; }
+
+/* Add-place form sheet */
+.add-place-sheet {
+  display: none;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--paper);
+  border-radius: 16px 16px 0 0;
+  padding: 16px 20px 36px;
+  z-index: 2000;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+  pointer-events: all;
+  max-height: 78vh;
+  overflow-y: auto;
+}
+.add-place-sheet.active { display: block; }
+.add-place-sheet h3 { font-family: var(--serif); font-size: 17px; margin-bottom: 14px; }
+.add-place-field { margin-bottom: 11px; }
+.add-place-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.add-place-field input,
+.add-place-field select,
+.add-place-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--card);
+  outline: none;
+}
+.add-place-field textarea { height: 64px; resize: none; }
+.add-place-actions { display: flex; gap: 8px; margin-top: 14px; }
+.add-place-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-save-place { background: var(--ink); color: var(--paper); }
+.btn-cancel-place { background: var(--accent-soft); color: var(--ink); border: 1px solid var(--warm-mid) !important; }
+
+/* Crosshair cursor in pick mode */
+#map-container.pick-mode { cursor: crosshair !important; }
+#map-container.pick-mode .leaflet-interactive { cursor: crosshair !important; }
+
+/* ── BROWSE ADD MODAL ── */
+.browse-add-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(20,14,8,0.45);
+  align-items: flex-end;
+  justify-content: center;
+}
+.browse-add-modal.active { display: flex; }
+.browse-add-sheet {
+  width: 100%;
+  max-width: 430px;
+  background: var(--paper);
+  border-radius: 16px 16px 0 0;
+  padding: 18px 20px 44px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.bap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.bap-header h3 { font-family: var(--serif); font-size: 17px; flex: 1; }
+.bap-close-btn, .bap-back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  font-family: var(--sans);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.bap-back-btn { margin-right: 8px; }
+.bap-search-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--card);
+  outline: none;
+  margin-bottom: 10px;
+}
+.bap-search-input:focus { border-color: var(--warm-mid); }
+.bap-status { font-size: 12px; color: var(--muted); margin-bottom: 10px; min-height: 16px; }
+.bap-results { display: flex; flex-direction: column; gap: 8px; }
+.bap-result-item {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.bap-result-item:active { border-color: var(--warm-mid); background: var(--accent-soft); }
+.bap-result-name { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+.bap-result-addr { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.bap-result-type {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.bap-confirm-card {
+  padding: 13px 15px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.bap-confirm-card strong { font-family: var(--serif); font-size: 15px; color: var(--ink); display: block; margin-bottom: 3px; }
+.bap-confirm-card span { font-size: 12px; color: var(--muted); }
+.btn-browse-add {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px dashed var(--warm-mid);
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
 </style>
 
 </head>
@@ -843,6 +1037,11 @@ body.map-open { overflow: hidden; }
 
 <div class="map-view" id="map-view">
   <div class="map-header">
+    <div class="map-action-row">
+      <button class="map-action-btn" id="btn-toggle-en">🌐 EN</button>
+      <button class="map-action-btn" id="btn-add-place">＋ Add place</button>
+    </div>
+    <div class="add-place-banner" id="add-place-banner">Tap anywhere on the map to drop a pin</div>
     <div class="map-cat-strip" id="map-cat-strip">
       <button class="map-cat-pill active" data-cat="all">✦ All</button>
       <button class="map-cat-pill" data-cat="food">🍜 Food</button>
@@ -855,6 +1054,59 @@ body.map-open { overflow: hidden; }
     </div>
   </div>
   <div id="map-container"></div>
+
+  <!-- Add Place Form Sheet -->
+  <div class="add-place-sheet" id="add-place-sheet">
+    <h3>＋ Add a place</h3>
+    <div class="add-place-field">
+      <label>Name *</label>
+      <input type="text" id="ap-name" placeholder="e.g. Café de Kura">
+    </div>
+    <div class="add-place-field">
+      <label>Japanese name</label>
+      <input type="text" id="ap-jp" placeholder="e.g. カフェ・ド・クラ">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <div class="add-place-field" style="flex:1;">
+        <label>Category</label>
+        <select id="ap-cat">
+          <option value="food">🍜 Food</option>
+          <option value="drink">🍸 Drink</option>
+          <option value="culture">⛩️ Culture</option>
+          <option value="shopping">🏮 Shopping</option>
+          <option value="art">🎨 Art</option>
+          <option value="nature">🌿 Nature</option>
+          <option value="hidden">🔮 Hidden</option>
+        </select>
+      </div>
+      <div class="add-place-field" style="flex:1;">
+        <label>Price</label>
+        <select id="ap-price">
+          <option value="Free">Free</option>
+          <option value="¥">¥</option>
+          <option value="¥¥">¥¥</option>
+          <option value="¥¥¥">¥¥¥</option>
+        </select>
+      </div>
+    </div>
+    <div class="add-place-field">
+      <label>City</label>
+      <select id="ap-city">
+        <option value="tokyo">Tokyo</option>
+        <option value="kyoto">Kyoto</option>
+        <option value="osaka">Osaka</option>
+        <option value="nara">Nara</option>
+      </select>
+    </div>
+    <div class="add-place-field">
+      <label>Notes</label>
+      <textarea id="ap-desc" placeholder="What makes this place special?"></textarea>
+    </div>
+    <div class="add-place-actions">
+      <button class="btn-cancel-place" id="btn-cancel-place">Cancel</button>
+      <button class="btn-save-place" id="btn-save-place">Save place</button>
+    </div>
+  </div>
 </div>
 
 <header class="app-header">
@@ -922,11 +1174,69 @@ body.map-open { overflow: hidden; }
 
 <div class="sort-bar">
   <div class="sort-label" id="cards-count">Showing 0 places</div>
+  <button class="btn-browse-add" id="btn-browse-add">＋ Add a place</button>
   <select class="sort-select" id="sort-select">
     <option value="list">My list first</option>
     <option value="name">A → Z</option>
     <option value="cat">By category</option>
   </select>
+</div>
+
+<!-- Browse: Add Place by Search Modal -->
+<div class="browse-add-modal" id="browse-add-modal">
+  <div class="browse-add-sheet">
+    <!-- Search view -->
+    <div id="bap-search-view">
+      <div class="bap-header">
+        <h3>Find a place</h3>
+        <button class="bap-close-btn" id="bap-close">✕</button>
+      </div>
+      <input class="bap-search-input" type="search" id="bap-input"
+             placeholder="e.g. Bar Centifolio Kyoto" autocomplete="off">
+      <div class="bap-status" id="bap-status"></div>
+      <div class="bap-results" id="bap-results"></div>
+    </div>
+    <!-- Confirm view -->
+    <div id="bap-confirm-view" style="display:none;">
+      <div class="bap-header">
+        <button class="bap-back-btn" id="bap-back">← Back</button>
+        <h3>Confirm place</h3>
+        <button class="bap-close-btn" id="bap-close2">✕</button>
+      </div>
+      <div class="bap-confirm-card" id="bap-confirm-card"></div>
+      <div class="add-place-field">
+        <label>Name</label>
+        <input type="text" id="bap-name">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="add-place-field" style="flex:1;">
+          <label>Category</label>
+          <select id="bap-cat">
+            <option value="food">🍜 Food</option>
+            <option value="drink">🍸 Drink</option>
+            <option value="culture">⛩️ Culture</option>
+            <option value="shopping">🏮 Shopping</option>
+            <option value="art">🎨 Art</option>
+            <option value="nature">🌿 Nature</option>
+            <option value="hidden">🔮 Hidden</option>
+          </select>
+        </div>
+        <div class="add-place-field" style="flex:1;">
+          <label>Price</label>
+          <select id="bap-price">
+            <option value="Free">Free</option>
+            <option value="¥">¥</option>
+            <option value="¥¥">¥¥</option>
+            <option value="¥¥¥">¥¥¥</option>
+          </select>
+        </div>
+      </div>
+      <div class="add-place-actions">
+        <button class="btn-cancel-place" id="bap-btn-cancel">Cancel</button>
+        <button class="btn-save-place" id="bap-btn-save">Add to my list</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="section-head">
@@ -1208,6 +1518,378 @@ document.addEventListener("DOMContentLoaded", function() {
       desc: 'Landmark five-star hotel in Okazaki, Kyoto\'s museum and garden district. 4.3 stars with nearly 5,000 reviews. Classic Japanese hospitality in a refined, understated style. Walking distance from Heian Shrine.',
       tips: ['The Japanese restaurant Yamatomi is worth a booking even if not staying', 'The Okazaki location puts you close to Nanzenji and the Philosopher\'s Path', 'Request a garden-view room for the most peaceful outlook'],
       dist: '—', walk: '—', price: '¥¥¥¥', icon: '🏨'
+    },
+
+    // ── KYOTO — discovered ──
+    {
+      id: 100, lat: 35.0272, lng: 135.7945, city: 'kyoto', cat: 'nature', saved: false,
+      name: 'Philosopher\'s Path', jp: '哲学の道',
+      desc: 'A 2km canal-side footpath lined with hundreds of cherry trees, connecting Ginkaku-ji to Nanzen-ji through a quiet residential neighbourhood. Named for philosopher Nishida Kitaro, who meditated here daily.',
+      tips: ['Mid-April cherry blossom is extraordinary but crowded — November maple foliage is equally beautiful and calmer', 'Small cafés, galleries, and pottery studios line the path — allow 2+ hours to wander', 'Walk north to south (Ginkaku-ji → Nanzen-ji) so the best scenery unfolds gradually'],
+      dist: '—', walk: '—', price: 'Free', icon: '🌸'
+    },
+    {
+      id: 101, lat: 35.0394, lng: 135.7292, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Kinkaku-ji', jp: '金閣寺',
+      desc: 'The Golden Pavilion — a three-storey Zen temple covered in gold leaf, reflected in a mirror pond. Originally a shogun\'s retirement villa, converted to a temple in 1408 and rebuilt in 1955 after arson.',
+      tips: ['Arrive at 9am opening to beat tour groups by 20 minutes', 'Combine with Ryoan-ji famous rock garden, 20 minutes walk away', 'The garden circuit is one-way and takes about 30 minutes at a leisurely pace'],
+      dist: '—', walk: '—', price: '¥500', icon: '🏯'
+    },
+    {
+      id: 102, lat: 35.0270, lng: 135.7979, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Ginkaku-ji', jp: '銀閣寺',
+      desc: 'The Silver Pavilion — never actually clad in silver, yet profoundly beautiful. Famous for its raked sand cone (Kogetsudai) and moss garden. The northern terminus of the Philosopher\'s Path.',
+      tips: ['Far less crowded than Kinkaku-ji despite equal beauty — visit on the same day', 'The upper hillside viewpoint looks back over the sand garden and out to the city', 'Entry queue forms quickly after 10am — aim for first thing in the morning'],
+      dist: '—', walk: '—', price: '¥500', icon: '⛩️'
+    },
+    {
+      id: 103, lat: 34.9948, lng: 135.7850, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Kiyomizu-dera', jp: '清水寺',
+      desc: 'A UNESCO-listed hillside temple with a wooden stage cantilevered over the forested valley. The Otowa waterfall below has three streams believed to grant longevity, love, and academic success.',
+      tips: ['Visit before 9am or after 5pm to avoid midday gridlock on Sannenzaka and Ninenzaka approach streets', 'Evening illuminations in spring and autumn require a separate ticket — worth it', 'The view from the stage back toward the city rooftops is the essential photograph'],
+      dist: '—', walk: '—', price: '¥500', icon: '⛩️'
+    },
+    {
+      id: 104, lat: 35.0142, lng: 135.7482, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Nijo Castle', jp: '二条城',
+      desc: 'A UNESCO-listed shogunate palace built in 1603 for Tokugawa Ieyasu, with \'nightingale floors\' engineered to squeak underfoot as a security measure against assassins. The ornate Ninomaru Palace is the highlight.',
+      tips: ['The Ninomaru Palace interior reveals how Tokugawa shoguns actually lived — detailed and fascinating', 'The Ninomaru Garden was designed by master gardener Kobori Enshu', 'Spring cherry blossom in the gardens is excellent; the castle itself is rarely crowded even then'],
+      dist: '—', walk: '—', price: '¥800', icon: '🏯'
+    },
+    {
+      id: 105, lat: 35.0113, lng: 135.7939, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Nanzen-ji', jp: '南禅寺',
+      desc: 'A grand Rinzai Zen temple complex with a dramatically oversized sanmon gate and a Meiji-era brick aqueduct running through its grounds. Multiple sub-temples, each with exceptional dry gardens.',
+      tips: ['Sub-temple Tenju-an has one of Kyoto\'s finest and least-visited dry gardens (separate admission)', 'Climb inside the sanmon gate for views over the treetops — ¥600 extra', 'Follow the aqueduct south toward the old Lake Biwa Canal incline — an underrated walk'],
+      dist: '—', walk: '—', price: 'Free', icon: '⛩️'
+    },
+    {
+      id: 106, lat: 35.0036, lng: 135.7753, city: 'kyoto', cat: 'hidden', saved: false,
+      name: 'Hanamikoji-dori', jp: '花見小路通',
+      desc: 'The most atmospheric street in Gion — a narrow lane of traditional ochaya teahouses where geiko and maiko still entertain clients. At dusk, real geisha pass on their way to evening appointments.',
+      tips: ['Best between 5pm–7pm when geisha walk to engagements — photograph respectfully from a distance', 'The northern end is more authentic; the southern stretch is more tourist-oriented', 'Most restaurants require introduction through a regular — enjoy the exterior atmosphere'],
+      dist: '—', walk: '—', price: 'Free', icon: '🔮'
+    },
+    {
+      id: 107, lat: 35.0054, lng: 135.7679, city: 'kyoto', cat: 'food', saved: false,
+      name: 'Pontocho Alley', jp: '先斗町',
+      desc: 'A narrow pedestrian lane parallel to the Kamogawa river, packed with some of Kyoto\'s finest restaurants and bars. In summer, restaurants extend platforms (kawayuka) over the river for open-air dining.',
+      tips: ['Book a kawayuka riverside terrace dinner in advance — available May to September only', 'Walk the full length from south to north first before choosing where to eat', 'The restaurants range hugely in price — read menus posted outside before committing'],
+      dist: '—', walk: '—', price: '¥¥–¥¥¥¥', icon: '🍜'
+    },
+    {
+      id: 108, lat: 35.0033, lng: 135.7795, city: 'kyoto', cat: 'nature', saved: false,
+      name: 'Maruyama Park', jp: '円山公園',
+      desc: 'Kyoto\'s most beloved public park, centred on a famous weeping cherry tree. Shrine stalls, food vendors, and picnicking locals create a festive atmosphere under the blossom.',
+      tips: ['Cherry blossom season (late March–early April) is magical — the illuminated tree after dark is unmissable', 'The park is free and always open — a good base for the Higashiyama temples cluster', 'Avoid peak cherry blossom weekends if possible; the crowds are extreme'],
+      dist: '—', walk: '—', price: 'Free', icon: '🌸'
+    },
+    {
+      id: 109, lat: 35.0168, lng: 135.6748, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Tenryu-ji', jp: '天龍寺',
+      desc: 'A UNESCO-listed Zen temple at the heart of Arashiyama with one of Kyoto\'s finest historic gardens. The Sōgenchi pond garden, designed in 1345, uses the mountains as borrowed scenery.',
+      tips: ['Garden-only entry (¥500) is usually sufficient — main hall interior costs extra', 'Combine with the Bamboo Grove which begins immediately behind the temple', 'The dragon ceiling in the main hall is a highlight of the full admission option'],
+      dist: '—', walk: '—', price: '¥500–¥800', icon: '⛩️'
+    },
+    {
+      id: 110, lat: 35.0436, lng: 135.7448, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Daitoku-ji', jp: '大徳寺',
+      desc: 'A vast Rinzai Zen complex in northern Kyoto with 24 sub-temples, several open to visitors with breathtaking dry gardens. One of the most important complexes in Japanese Zen Buddhism.',
+      tips: ['Koto-in, Daisen-in, and Ryogen-in are the most accessible sub-temples with the finest gardens', 'The northern location means very few tourists even in peak season', 'Weekday mornings offer a meditative quiet that\'s rare anywhere in Kyoto'],
+      dist: '—', walk: '—', price: '¥400–600', icon: '⛩️'
+    },
+    {
+      id: 111, lat: 35.0163, lng: 135.7824, city: 'kyoto', cat: 'culture', saved: false,
+      name: 'Heian Jingu', jp: '平安神宮',
+      desc: 'A vivid 1895 Shinto shrine built to mark the 1,100th anniversary of Kyoto\'s founding. The giant vermillion torii gate is one of Japan\'s largest. The four surrounding shin\'en gardens are a masterpiece of Meiji-era landscaping.',
+      tips: ['The garden (separate ¥600 admission) is genuinely spectacular — do not skip it', 'Late April shidarezakura weeping cherries in the garden are among Kyoto\'s finest', 'The Jidai Matsuri procession in October travels from the Imperial Palace to this shrine'],
+      dist: '—', walk: '—', price: 'Free (garden ¥600)', icon: '⛩️'
+    },
+    {
+      id: 112, lat: 35.0069, lng: 135.7670, city: 'kyoto', cat: 'shopping', saved: false,
+      name: 'Ippodo Tea', jp: '一保堂茶舗',
+      desc: 'The most revered traditional tea merchant in Kyoto, on Teramachi-dori since 1717. Ceremonial-grade matcha, gyokuro, sencha, and hojicha sold with genuine expertise. The Kaboku tearoom lets you taste before buying.',
+      tips: ['Staff can advise on every tea\'s grade and origin — take the time to ask', 'The sit-down tea service in Kaboku tearoom includes wagashi and is excellent value', 'The Ummon gift set makes a beautifully packaged souvenir'],
+      dist: '—', walk: '—', price: '¥–¥¥¥', icon: '🍵'
+    },
+    {
+      id: 113, lat: 34.9992, lng: 135.7789, city: 'kyoto', cat: 'food', saved: false,
+      name: 'Kikunoi Honten', jp: '菊乃井 本店',
+      desc: 'Three Michelin-starred kaiseki by chef Murata Yoshihiro — a landmark of modern Kyoto cuisine. Set in Higashiyama with a traditional garden entrance. Murata-san is widely credited with globalising kaiseki.',
+      tips: ['Lunch kaiseki (¥8,000–15,000) is more accessible than dinner; book 3–4 weeks ahead', 'The Roan branch near Nijo Castle is slightly less formal and easier to book', 'This is a once-in-a-trip meal — plan the day around it'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🍱'
+    },
+    {
+      id: 114, lat: 35.1102, lng: 135.7487, city: 'kyoto', cat: 'hidden', saved: false,
+      name: 'Kibune', jp: '貴船',
+      desc: 'A mountain village 30 minutes north of Kyoto at the headwaters of the Kamo River, famous for kawadoko — dining platforms suspended directly over the rushing river. Otherworldly in summer; equally magical in winter snow.',
+      tips: ['Book kawadoko dinners well ahead — summer slots (June–September) sell out fast', 'The walk between Kibune and Kurama village is a superb 2-hour mountain hike', 'Kifune Shrine at the village head is gorgeous — arrive before 10am to have it to yourself'],
+      dist: '—', walk: '—', price: '¥¥¥–¥¥¥¥', icon: '🔮'
+    },
+
+    // ── TOKYO — discovered ──
+    {
+      id: 115, lat: 35.6706, lng: 139.7059, city: 'tokyo', cat: 'shopping', saved: false,
+      name: 'Takeshita Street', jp: '竹下通り',
+      desc: 'Harajuku\'s narrow pedestrian alley — the birthplace and epicentre of Japanese youth street fashion. Crepe stalls, candy floss in wild flavours, and boutiques selling every subcultural style from Lolita to streetwear.',
+      tips: ['Weekday mornings are far more manageable than weekend afternoons', 'The best independent fashion is in the side streets and upper floors, not ground level', 'Rainbow cotton candy from Totti Candy Factory is the mandatory snack of the street'],
+      dist: '—', walk: '—', price: '¥–¥¥', icon: '🛍️'
+    },
+    {
+      id: 116, lat: 35.6658, lng: 139.7132, city: 'tokyo', cat: 'shopping', saved: false,
+      name: 'Omotesando Hills', jp: '表参道ヒルズ',
+      desc: 'A sleek underground shopping complex by Tadao Ando, spiralling six floors beneath the zelkova-lined boulevard. Houses flagship stores for Japanese and international luxury brands; the architecture is as spectacular as the shops.',
+      tips: ['Even if not shopping, the spatial experience of the spiralling atrium is worth seeing', 'The street-level Omotesando boulevard running from Harajuku to Aoyama is excellent for a stroll', 'Dover Street Market Ginza (nearby) is unmissable if you appreciate concept retail'],
+      dist: '—', walk: '—', price: 'Free to enter', icon: '🏬'
+    },
+    {
+      id: 117, lat: 35.6443, lng: 139.6989, city: 'tokyo', cat: 'nature', saved: false,
+      name: 'Nakameguro Canal', jp: '目黒川',
+      desc: 'A 3.8km canal walk through one of Tokyo\'s most stylish neighbourhoods, lined with independent cafés, design studios, restaurants, and boutiques. Extraordinary in late March when cherry trees form a tunnel over the water.',
+      tips: ['Cherry blossom in late March is among the best in Tokyo — come in the evening for the illuminations', 'The stretch between Nakameguro station and Ikejiri-Ohashi has the best shops and cafés', 'Onibus Coffee just off the canal is one of Tokyo\'s finest specialty roasters'],
+      dist: '—', walk: '—', price: 'Free', icon: '🌸'
+    },
+    {
+      id: 118, lat: 35.7267, lng: 139.7653, city: 'tokyo', cat: 'hidden', saved: false,
+      name: 'Yanaka Ginza', jp: '谷中銀座',
+      desc: 'A preserved shitamachi shopping street in Yanaka — one of the few Tokyo neighbourhoods to survive the 1923 earthquake and WWII bombing. Indie shops, tofu stalls, old temples, and cats everywhere.',
+      tips: ['The Yuyake Dandan steps at the southern end are famous for sunset — arrive 30 minutes before dusk', 'Yanaka Cemetery behind the street is unexpectedly beautiful and utterly un-touristy', 'The whole Yanaka–Nezu–Sendagi triangle is walkable and one of Tokyo\'s great half-day discoveries'],
+      dist: '—', walk: '—', price: 'Free', icon: '🔮'
+    },
+    {
+      id: 119, lat: 35.6614, lng: 139.6682, city: 'tokyo', cat: 'hidden', saved: false,
+      name: 'Shimokitazawa', jp: '下北沢',
+      desc: 'Tokyo\'s bohemian heartland — a dense web of narrow streets packed with vintage clothing stores, live music venues, indie theatres, and hole-in-the-wall bars. The anti-Omotesando: proudly unglamorous and fiercely individual.',
+      tips: ['Start at the south exit of Shimokitazawa station — most interesting shops within 10 minutes\' walk', 'Flamingo and Chicago Thrift are the best-known vintage shops; lesser-known alleys have better finds', 'The live music scene is excellent — check what\'s on at Honda Theatre or Shimokitazawa ERA'],
+      dist: '—', walk: '—', price: 'Free to wander', icon: '🔮'
+    },
+    {
+      id: 120, lat: 35.6604, lng: 139.7292, city: 'tokyo', cat: 'art', saved: false,
+      name: 'Mori Art Museum', jp: '森美術館',
+      desc: 'A world-class contemporary art museum on the 53rd floor of Roppongi Hills Mori Tower, with sweeping 360° city views included in admission. One of Asia\'s most ambitious contemporary art programmes.',
+      tips: ['Admission includes the Tokyo City View observation floor — exceptional combined value', 'Open until 10pm most nights — a rare Tokyo museum perfect for an evening visit', 'The exhibitions rotate roughly every three months — check the current programme before visiting'],
+      dist: '—', walk: '—', price: '¥1,800–2,000', icon: '🎨'
+    },
+    {
+      id: 121, lat: 35.6618, lng: 139.7173, city: 'tokyo', cat: 'art', saved: false,
+      name: 'Nezu Museum', jp: '根津美術館',
+      desc: 'A private museum in Minami-Aoyama housing an exceptional collection of pre-modern East Asian art, including Ogata Korin\'s famous iris screen. The four-acre bamboo garden is a hidden masterpiece in the middle of the city.',
+      tips: ['The Ogata Korin \'Irises\' screens are shown in early May — time a visit accordingly', 'The garden café serves matcha and wagashi — a perfect pause after the galleries', 'The Kengo Kuma-designed bamboo entrance corridor sets a contemplative mood from the start'],
+      dist: '—', walk: '—', price: '¥1,300', icon: '🎨'
+    },
+    {
+      id: 122, lat: 35.6852, lng: 139.7100, city: 'tokyo', cat: 'nature', saved: false,
+      name: 'Shinjuku Gyoen', jp: '新宿御苑',
+      desc: 'A 58-hectare former imperial garden combining French formal, English landscape, and Japanese styles. One of Tokyo\'s premier cherry blossom destinations with 1,500+ trees of 65 varieties.',
+      tips: ['Alcohol is banned — a refreshingly calm alternative to Yoyogi Park during hanami season', 'Late-blooming cherry varieties continue into late April when most parks have finished', 'The Japanese garden section in the south is the quietest and most beautiful corner'],
+      dist: '—', walk: '—', price: '¥500', icon: '🌿'
+    },
+    {
+      id: 123, lat: 35.7052, lng: 139.7488, city: 'tokyo', cat: 'nature', saved: false,
+      name: 'Koishikawa Korakuen', jp: '小石川後楽園',
+      desc: 'Tokyo\'s oldest surviving garden, created in 1629 by the Mito Tokugawa clan. A miniaturised landscape garden representing famous scenes from Japan and China arranged around a central pond.',
+      tips: ['One of Tokyo\'s least-visited major gardens despite being exceptional — rarely crowded even in spring', 'Cherry blossom and plum blossom (February) are the peak seasons', 'Directly beside Tokyo Dome — a jarring juxtaposition that makes for interesting photography'],
+      dist: '—', walk: '—', price: '¥300', icon: '🌿'
+    },
+    {
+      id: 124, lat: 35.6492, lng: 139.7016, city: 'tokyo', cat: 'shopping', saved: false,
+      name: 'Daikanyama T-Site', jp: '代官山 T-SITE',
+      desc: 'A beautifully designed Tsutaya bookshop complex in Daikanyama — three interconnected buildings among zelkova trees, specialising in art, photography, travel, and design books alongside vinyl and rare magazines.',
+      tips: ['The Anjin lounge inside serves cocktails surrounded by vintage magazines — a superb evening spot', 'The magazine and photobook section is extraordinary — allow more time than planned', 'The neighbouring Log Road Daikanyama has further design-focused shops worth browsing'],
+      dist: '—', walk: '—', price: 'Free to browse', icon: '📚'
+    },
+    {
+      id: 125, lat: 35.7021, lng: 139.7742, city: 'tokyo', cat: 'culture', saved: false,
+      name: 'Akihabara', jp: '秋葉原',
+      desc: 'Tokyo\'s electric town and global capital of anime, manga, and gaming culture. Multi-storey electronics towers sit beside capsule toy machines, maid cafés, retro game shops, and floor upon floor of figures and memorabilia.',
+      tips: ['Yodobashi Camera offers the best electronics selection with tax-free purchasing', 'Super Potato and Retro Game Camp are the best shops for vintage cartridges and consoles', 'The maid café experience is genuinely entertaining with the right expectations — most have photos boards outside'],
+      dist: '—', walk: '—', price: 'Free to explore', icon: '🎮'
+    },
+    {
+      id: 126, lat: 35.6726, lng: 139.7634, city: 'tokyo', cat: 'drink', saved: false,
+      name: 'Bar Lupin', jp: 'バー ルパン',
+      desc: 'A legendary subterranean Ginza bar operating since 1928, frequented by Osamu Dazai, Mishima, and generations of Japanese writers. Dark wood, leather stools, and absolutely no attempt to modernise.',
+      tips: ['Order a whisky highball or the house gin fizz — simple drinks suit this atmosphere perfectly', 'Tucked in a basement on a side street — look for the small lantern and discreet sign', 'The literary atmosphere is genuine; menus and walls reference famous regulars'],
+      dist: '—', walk: '—', price: '¥¥¥', icon: '🍸'
+    },
+    {
+      id: 127, lat: 35.6681, lng: 139.7127, city: 'tokyo', cat: 'food', saved: false,
+      name: 'Tonkatsu Maisen', jp: 'とんかつ まい泉',
+      desc: 'The most famous tonkatsu restaurant in Tokyo, housed in a renovated 1920s public bathhouse in Omotesando. Aged-pork cutlets fried to a perfect golden crust, served with unlimited cabbage and barley rice.',
+      tips: ['Queue before 11:30am opening or expect a 45-minute wait at lunch', 'The hire-katsu (fillet) is finer than the rosu-katsu (loin) — worth the slight price difference', 'The historic bathhouse building and neighbourhood setting are part of the appeal'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🍽️'
+    },
+    {
+      id: 128, lat: 35.6700, lng: 139.7073, city: 'tokyo', cat: 'food', saved: false,
+      name: 'Afuri Ramen', jp: 'AFURI',
+      desc: 'A celebrated Tokyo ramen brand known for its yuzu shio (citrus-salt) broth — light, aromatic, and utterly unlike the heavier Sapporo or Hakata styles. The Harajuku branch is the most atmospheric.',
+      tips: ['The yuzu shio ramen is the essential order; the tsukemen dipping version is also excellent', 'Order from the vending machine at the entrance; then take a seat and wait', 'The Nakameguro branch has a sleek interior and pleasant canal proximity'],
+      dist: '—', walk: '—', price: '¥¥', icon: '🍜'
+    },
+    {
+      id: 129, lat: 35.6686, lng: 139.7198, city: 'tokyo', cat: 'food', saved: false,
+      name: 'Narisawa', jp: 'ナリサワ',
+      desc: 'Two Michelin-starred restaurant by Yoshihiro Narisawa — Japan\'s leading practitioner of \'satoyama cuisine\', sourcing from mountain forests and coastal ecosystems. A dining philosophy as original as the food.',
+      tips: ['Book 2–3 months ahead; lunch is slightly more accessible than dinner', 'The \'bread of the forest\' — baked in a pot at the table — is the signature moment of the meal', 'The sake pairing connects better with the terroir philosophy than wine'],
+      dist: '—', walk: '—', price: '¥¥¥¥', icon: '🌿'
+    },
+
+    // ── OSAKA — discovered ──
+    {
+      id: 130, lat: 34.6873, lng: 135.5262, city: 'osaka', cat: 'culture', saved: false,
+      name: 'Osaka Castle', jp: '大阪城',
+      desc: 'Japan\'s most visited castle, rebuilt in 1931 on the site of Toyotomi Hideyoshi\'s 1583 original. The surrounding 106-hectare park is one of Osaka\'s finest open spaces. The interior museum traces the castle\'s turbulent history.',
+      tips: ['The park is often more rewarding than the castle interior — plan time for both', 'Plum blossoms in February and cherry blossoms in April make the park exceptional', 'The west side gives the best wide-angle view of the exterior and moat'],
+      dist: '—', walk: '—', price: '¥600 (park free)', icon: '🏯'
+    },
+    {
+      id: 131, lat: 34.7054, lng: 135.4906, city: 'osaka', cat: 'culture', saved: false,
+      name: 'Umeda Sky Building', jp: '梅田スカイビル',
+      desc: 'Two towers connected at the top by a \'floating garden\' observatory 173 metres above Osaka. The crossing escalator through open air between the towers is a deliberately theatrical architectural moment.',
+      tips: ['The outdoor rooftop ring is open-air — dress warmly in winter', 'The escalator crossing is the highlight — it\'s not enclosed and offers genuinely vertiginous views', 'The underground retro food hall (Takimi Koji) is excellent for dinner before or after'],
+      dist: '—', walk: '—', price: '¥1,500', icon: '🌆'
+    },
+    {
+      id: 132, lat: 34.6524, lng: 135.5063, city: 'osaka', cat: 'culture', saved: false,
+      name: 'Shinsekai', jp: '新世界',
+      desc: 'A retro 1912 entertainment district modelled on Paris and New York, that fell into decline and re-emerged as a proudly kitschy destination. Famous for Tsutenkaku tower, kushikatsu restaurants, and unvarnished working-class atmosphere.',
+      tips: ['Kushikatsu fried skewers is the mandatory eat here — Daruma is the most famous chain', 'The sauce double-dipping rule (never dip twice into the communal pot) is enforced seriously', 'The vibe is very different from tourist Osaka — deliberately unfancy and enjoyable for it'],
+      dist: '—', walk: '—', price: '¥–¥¥', icon: '🏮'
+    },
+    {
+      id: 133, lat: 34.6681, lng: 135.5085, city: 'osaka', cat: 'food', saved: false,
+      name: 'Kuromon Ichiba Market', jp: '黒門市場',
+      desc: 'Osaka\'s \'kitchen\' — a 580m covered market of 150 specialist vendors selling fresh seafood, premium wagyu, produce, and street food. Where Osaka\'s chefs have shopped for 200 years.',
+      tips: ['Go on a weekday morning when it\'s a working market rather than tourist spectacle', 'Wagyu skewers and tuna sashimi are the standout eat-in options', 'Many stalls open from 9am and wind down by early afternoon'],
+      dist: '—', walk: '—', price: '¥–¥¥¥', icon: '🐟'
+    },
+    {
+      id: 134, lat: 34.6686, lng: 135.5023, city: 'osaka', cat: 'hidden', saved: false,
+      name: 'Hozenji Yokocho', jp: '法善寺横丁',
+      desc: 'A narrow stone-paved alley near Dotonbori, named for the moss-covered Fudo Myoo statue at Hozenji temple. One of Osaka\'s most atmospheric night spots — lantern-lit restaurants, old bars, and the scent of incense.',
+      tips: ['The moss on the Fudo Myoo statue has been building for decades from water offerings — it\'s brilliant green', 'Best after dark when the stone lanterns are lit and the alley glows', 'The surrounding streets have old-school Osaka izakayas untouched by tourist pricing'],
+      dist: '—', walk: '—', price: 'Free', icon: '🔮'
+    },
+    {
+      id: 135, lat: 34.7039, lng: 135.5126, city: 'osaka', cat: 'shopping', saved: false,
+      name: 'Tenjinbashisuji Shotengai', jp: '天神橋筋商店街',
+      desc: 'Japan\'s longest covered shopping arcade at 2.6km, running through a traditional Osaka neighbourhood. 600 shops favoured by locals over tourist-oriented Shinsaibashi — everyday goods at honest prices.',
+      tips: ['The northern end (around 6-chome) is the most local and least visited by tourists', 'Osaka Museum of Housing and Living is midway along — a recreated Edo street worth a stop', 'Great for traditional food items, practical goods, and watching daily Osaka life'],
+      dist: '—', walk: '—', price: 'Free to wander', icon: '🛍️'
+    },
+    {
+      id: 136, lat: 34.6726, lng: 135.4999, city: 'osaka', cat: 'shopping', saved: false,
+      name: 'Amerika-mura', jp: 'アメリカ村',
+      desc: 'Osaka\'s answer to Harajuku — a compact district of secondhand clothing, streetwear, import goods, and Osaka\'s most distinctive youth fashion culture. Triangle Park at its centre hosts skateboarding, bands, and street performers.',
+      tips: ['Best on a Saturday afternoon when it\'s most energetic', 'Used record shops, vintage Americana, and rare streetwear are the standout shopping categories', 'Dig into upper floors and side streets — the ground-level frontage is the least interesting part'],
+      dist: '—', walk: '—', price: 'Free to browse', icon: '🛍️'
+    },
+    {
+      id: 137, lat: 34.6920, lng: 135.5050, city: 'osaka', cat: 'art', saved: false,
+      name: 'National Museum of Art Osaka', jp: '国立国際美術館',
+      desc: 'An entirely underground contemporary art museum on Nakanoshima island, identified above ground only by a dramatic steel canopy sculpture. One of Japan\'s finest and least-promoted contemporary art collections.',
+      tips: ['The underground galleries are surprisingly large — allow 90+ minutes for a proper visit', 'The permanent collection features major Japanese post-war art rarely seen elsewhere', 'Combine with a walk along the Nakanoshima canal between the Osaka and Tosabori rivers'],
+      dist: '—', walk: '—', price: '¥430', icon: '🎨'
+    },
+    {
+      id: 138, lat: 34.6737, lng: 135.5013, city: 'osaka', cat: 'shopping', saved: false,
+      name: 'Shinsaibashi-suji', jp: '心斎橋筋',
+      desc: 'Osaka\'s main covered shopping boulevard — 580m of department stores, fashion chains, cosmetics, and cafés running from Shinsaibashi to Dotonbori. The covered arcade keeps the experience pleasant in any weather.',
+      tips: ['The northern end near Honmachi is less crowded with higher-end boutiques', 'Don Quijote at the Dotonbori end is open 24 hours — genuinely strange and worth a look', 'The connected arcade network makes it easy to keep walking into different sections of central Osaka'],
+      dist: '—', walk: '—', price: 'Free to browse', icon: '🛍️'
+    },
+    {
+      id: 139, lat: 34.6465, lng: 135.5135, city: 'osaka', cat: 'culture', saved: false,
+      name: 'Abeno Harukas', jp: 'あべのハルカス',
+      desc: 'Japan\'s tallest building at 300m in the Abeno district, with a Harukas 300 observatory on floors 58–60. Panoramic views of Osaka and Kobe; on clear winter days, Mt. Fuji is faintly visible.',
+      tips: ['Less crowded than Osaka Castle while offering far superior views — a better use of limited time', 'Evening visits offer both sunset and city lights — arrive one hour before dusk', 'The Kintetsu department store below has an exceptional B2 food hall'],
+      dist: '—', walk: '—', price: '¥1,500', icon: '🌆'
+    },
+    {
+      id: 140, lat: 34.6519, lng: 135.5081, city: 'osaka', cat: 'hidden', saved: false,
+      name: 'Spa World', jp: 'スパワールド',
+      desc: 'An 11-storey onsen complex near Shinsekai with themed bathing zones from Europe (Roman, Greek, Finnish) and Asia (Japanese, Chinese, Persian). One of the world\'s most bizarre and entertaining bath experiences.',
+      tips: ['Tattoos are permitted here — unusual for Japan and a major draw', 'The zones rotate by gender monthly — check which are available for your visit', 'Open 24 hours — a late-night visit after Shinsekai dinner is an excellent combination'],
+      dist: '—', walk: '—', price: '¥¥', icon: '♨️'
+    },
+    {
+      id: 141, lat: 34.8423, lng: 135.4695, city: 'osaka', cat: 'nature', saved: false,
+      name: 'Minoo Park', jp: '箕面公園',
+      desc: 'A forested gorge park 30 minutes north of Osaka, famous for its 33m waterfall and extraordinary autumn foliage. Wild monkeys roam the canyon trail. Deep-fried maple leaf snacks are a local delicacy sold only here.',
+      tips: ['The trail to the waterfall is 2.7km — comfortable walking but wear good shoes', 'Mid-November is peak foliage — the trail turns completely red and orange', 'Deep-fried maple leaves (momiji tempura) take 2 years to prepare — they\'re a genuine curiosity'],
+      dist: '—', walk: '—', price: 'Free', icon: '🍂'
+    },
+    {
+      id: 142, lat: 34.7022, lng: 135.4952, city: 'osaka', cat: 'food', saved: false,
+      name: 'Kiji Okonomiyaki', jp: '喜字',
+      desc: 'A legendary okonomiyaki restaurant tucked beneath an elevated expressway in Umeda — one of Osaka\'s most atmospheric eating experiences. Osaka-style pancakes teppan-cooked at the counter in front of you.',
+      tips: ['The location under the highway overpass is part of the charm — unusual and memorable', 'Order the mixed (negi and standard) okonomiyaki to get a full sense of their range', 'Cash only; arrive before 6pm or expect a wait'],
+      dist: '—', walk: '—', price: '¥', icon: '🥘'
+    },
+    {
+      id: 143, lat: 34.6524, lng: 135.5076, city: 'osaka', cat: 'food', saved: false,
+      name: 'Kushikatsu Daruma', jp: '串かつだるま',
+      desc: 'The most famous kushikatsu chain, born in Shinsekai. Beef, vegetables, and seafood skewers deep-fried to order and dipped — just once — into communal sauce. The ultimate Osaka casual eating experience.',
+      tips: ['The double-dipping ban is enforced with theatrical seriousness — honour it absolutely', 'Order 10–15 skewers per person for a satisfying meal', 'The Shinsekai original branch is the most atmospheric — arrive before 6pm'],
+      dist: '—', walk: '—', price: '¥', icon: '🍢'
+    },
+    {
+      id: 144, lat: 34.6700, lng: 135.5030, city: 'osaka', cat: 'drink', saved: false,
+      name: 'Bar Nayami', jp: 'バー 悩み',
+      desc: 'A quietly exceptional Namba cocktail bar — intimate, serious, and the opposite of the chaos of Dotonbori one street away. Excellent Japanese whisky selection and a bartender who genuinely enjoys conversation.',
+      tips: ['Order seasonal cocktails rather than classics to see the bar at its best', 'The bar seats around 10 — arrive early or make a reservation', 'A perfect ending to a Dotonbori evening — 3 minutes walk from the canal'],
+      dist: '—', walk: '—', price: '¥¥¥', icon: '🍸'
+    },
+
+    // ── NARA — discovered ──
+    {
+      id: 145, lat: 34.6885, lng: 135.8399, city: 'nara', cat: 'culture', saved: false,
+      name: 'Tōdai-ji', jp: '東大寺',
+      desc: 'A UNESCO World Heritage temple housing Japan\'s largest bronze Buddha — 15 metres tall and weighing 500 tonnes. The Daibutsuden (Great Buddha Hall) is the world\'s largest wooden building, standing in various forms since 752 AD.',
+      tips: ['Arrive before 9am to experience the Great Buddha in near silence before tour groups arrive', 'A column nostril the same size as the Buddha\'s is squeezed through for good luck — join the queue', 'The Nigatsu-do sub-temple behind offers a quiet elevated view over the park — don\'t miss it'],
+      dist: '—', walk: '—', price: '¥600', icon: '⛩️'
+    },
+    {
+      id: 146, lat: 34.6814, lng: 135.8481, city: 'nara', cat: 'culture', saved: false,
+      name: 'Kasuga Taisha', jp: '春日大社',
+      desc: 'A UNESCO-listed Shinto shrine established in 768 AD, approached through forested paths lined with 3,000 stone and bronze lanterns. The interior has 1,000 hanging bronze lanterns lit twice yearly at festival.',
+      tips: ['The lantern lighting festivals in February and August are spectacular — book accommodation months ahead', 'The forest approach path is one of Nara\'s great walks — allow 20 minutes each way', 'The Kokuhoden museum holds the shrine\'s extraordinary armour and weapon collection'],
+      dist: '—', walk: '—', price: 'Free (museum ¥500)', icon: '⛩️'
+    },
+    {
+      id: 147, lat: 34.6866, lng: 135.8407, city: 'nara', cat: 'nature', saved: false,
+      name: 'Isui-en Garden', jp: '依水園',
+      desc: 'A two-part garden created across two periods (1670 and 1899) using borrowed scenery — Todai-ji\'s roofline and Mount Wakakusa are framed as part of the garden composition. One of the Meiji era\'s great landscape achievements.',
+      tips: ['The northern section (Meiji-era) is the masterpiece with the best borrowed scenery compositions', 'The teahouse within the garden serves matcha and wagashi — a perfect rest point', 'Almost never crowded even in peak season — one of Nara\'s genuine quiet discoveries'],
+      dist: '—', walk: '—', price: '¥900', icon: '🌿'
+    },
+    {
+      id: 148, lat: 34.6861, lng: 135.8361, city: 'nara', cat: 'art', saved: false,
+      name: 'Nara National Museum', jp: '奈良国立博物館',
+      desc: 'Japan\'s premier collection of Buddhist art, housed in a Meiji-era building in Nara Park. The permanent collection spans sculpture, paintings, and metalwork from the Asuka period through Edo. The October Shosoin Exhibition is unmissable.',
+      tips: ['The annual Shosoin Exhibition (late October–early November) displays imperial treasures rarely shown — plan around it if possible', 'The Western Wing (Nishikan) is the permanent Buddhist art display — exceptional quality throughout', 'The Meiji-era building itself is a fine example of Beaux-Arts adapted for Japanese context'],
+      dist: '—', walk: '—', price: '¥700', icon: '🏛️'
+    },
+    {
+      id: 149, lat: 34.6789, lng: 135.8449, city: 'nara', cat: 'food', saved: false,
+      name: 'Nakatanidou', jp: '中谷堂',
+      desc: 'A tiny mochi shop in Higashimuki shopping street, famous for its kinetic performance — staff pound mochi at astonishing speed in a choreographed rhythm that draws crowds. The resulting yomogi (mugwort) mochi is exceptional.',
+      tips: ['The pounding happens irregularly throughout the day — lingering near the shop pays off', 'The mochi is best eaten immediately while still warm and soft', 'Look for the crowd rather than the sign — it\'s easy to walk past on busy days'],
+      dist: '—', walk: '—', price: '¥', icon: '🍡'
+    },
+    {
+      id: 150, lat: 34.6871, lng: 135.8397, city: 'nara', cat: 'nature', saved: false,
+      name: 'Yoshiki-en Garden', jp: '吉城園',
+      desc: 'A serene traditional garden beside Isui-en, often entirely overlooked despite equal beauty. Three linked areas — a moss garden, a pond garden, and a tea garden — all completely free for foreign visitors.',
+      tips: ['Free entry for foreign nationals — show your passport or foreign residence card', 'The moss garden is particularly fine and immaculately maintained', 'So few visitors come here even in peak season that you may have it to yourself'],
+      dist: '—', walk: '—', price: 'Free (foreign visitors)', icon: '🌿'
+    },
+    {
+      id: 151, lat: 34.6794, lng: 135.8337, city: 'nara', cat: 'culture', saved: false,
+      name: 'Gangō-ji', jp: '元興寺',
+      desc: 'A UNESCO World Heritage temple founded in 593 AD — one of Japan\'s oldest Buddhist temples, crumbling quietly in the Naramachi neighbourhood away from the park crowds. Original Asuka-period roof tiles remain in place.',
+      tips: ['Naramachi surrounding the temple is Nara\'s most atmospheric old town — allow time to explore the machiya streets', 'The Garan precinct is intimate and meditative compared to Todai-ji', 'Small enough to visit in 30 minutes — combine with a Naramachi wander'],
+      dist: '—', walk: '—', price: '¥500', icon: '⛩️'
     }
   ];
 
@@ -1229,6 +1911,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var LS_KEY_SAVED   = 'japan_saved';
   var LS_KEY_NOTES   = 'japan_notes';
   var LS_KEY_VISITED = 'japan_visited';
+  var LS_KEY_CUSTOM  = 'japan_custom_places';
 
   function lsGet(key, fallback) {
     try { var v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; }
@@ -1246,6 +1929,14 @@ document.addEventListener("DOMContentLoaded", function() {
     lsSet(LS_KEY_VERSION, SCHEMA_VERSION);
   }
   migrate();
+
+  // Load user-added custom places from localStorage and merge in
+  var customPlaces = lsGet(LS_KEY_CUSTOM, []);
+  customPlaces.forEach(function(cp) {
+    if (!places.find(function(p){ return p.id === cp.id; })) {
+      places.push(cp);
+    }
+  });
 
   // Merge persisted user state onto places at startup
   var savedIds   = lsGet(LS_KEY_SAVED,   []);
@@ -1366,6 +2057,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapInstance = null;
   var mapMarkers  = [];
   var mapCat      = 'all';
+  var mapTileEN   = false;
+  var mapTileLayer = null;
+  var TILE_OSM    = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var TILE_CARTO  = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  var ATTR_OSM    = '© OpenStreetMap contributors';
+  var ATTR_CARTO  = '© OpenStreetMap contributors © CARTO';
+  var addingPlace    = false;
+  var addPlaceLatLng = null;
 
   var catColours = {
     food: '#e67e22', drink: '#8e44ad', culture: '#c0392b',
@@ -1386,11 +2085,17 @@ document.addEventListener("DOMContentLoaded", function() {
     if (mapInstance) return;
     var centre = mapCityCentres[state.city] || mapCityCentres.kyoto;
     mapInstance = L.map('map-container', { zoomControl: false }).setView(centre, 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
+    mapTileLayer = L.tileLayer(mapTileEN ? TILE_CARTO : TILE_OSM, {
+      attribution: mapTileEN ? ATTR_CARTO : ATTR_OSM,
       maxZoom: 19
     }).addTo(mapInstance);
     L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+    mapInstance.on('click', function(e) {
+      if (!addingPlace) return;
+      addPlaceLatLng = e.latlng;
+      stopAddPlaceMode();
+      prefillAddPlaceForm(e.latlng.lat, e.latlng.lng);
+    });
     renderMapPins();
   }
 
@@ -1572,6 +2277,7 @@ document.addEventListener("DOMContentLoaded", function() {
       '<div class="panel-badges">' +
         '<span class="badge badge-cat">' + p.cat + '</span>' +
         (p.saved ? '<span class="badge badge-saved">✓ on your list</span>' : '') +
+        (p.userAdded ? '<span class="badge badge-cat" style="background:#fff3e0;color:#b45309;">✏ yours</span>' : '') +
         '<span class="badge badge-cat" style="background:#e8eeff;color:#3456a0;">📍 ' + p.dist + '</span>' +
       '</div>' +
       '<p class="panel-desc">' + p.desc + '</p>' +
@@ -1590,6 +2296,7 @@ document.addEventListener("DOMContentLoaded", function() {
   '</div>' +
   '<div class="panel-cta">' +
     '<a class="maps-btn" href="https://maps.apple.com/?q=' + encodeURIComponent(p.name + ' Japan') + '" target="_blank">Open in Maps</a>' +
+    (p.userAdded ? '<button onclick="window._deleteCustomPlace(' + p.id + ')" style="margin-top:8px;width:100%;padding:11px;border-radius:8px;border:1px solid #e8c4c4;background:#fdf0f0;color:#c0392b;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;">🗑 Remove this place</button>' : '') +
   '</div>';
 
 content.querySelector('.btn-toggle-saved').addEventListener('click', function() {
@@ -1725,6 +2432,258 @@ if (!box || !text) return;
 text.innerHTML = html;
 box.style.display = 'block';
 }
+
+// ── BROWSE ADD PLACE BY SEARCH ──
+var bapSelectedPlace = null;
+var bapSearchTimer   = null;
+
+function openBrowseAddSheet() {
+  document.getElementById('browse-add-modal').classList.add('active');
+  document.getElementById('bap-search-view').style.display = '';
+  document.getElementById('bap-confirm-view').style.display = 'none';
+  document.getElementById('bap-input').value = '';
+  document.getElementById('bap-results').innerHTML = '';
+  document.getElementById('bap-status').textContent = '';
+  bapSelectedPlace = null;
+  setTimeout(function() { document.getElementById('bap-input').focus(); }, 120);
+}
+
+function closeBrowseAddSheet() {
+  document.getElementById('browse-add-modal').classList.remove('active');
+  bapSelectedPlace = null;
+  if (bapSearchTimer) clearTimeout(bapSearchTimer);
+}
+
+function guessCatFromNominatim(result) {
+  var type = (result.type || '').toLowerCase();
+  var cls  = (result.class || '').toLowerCase();
+  var foodTypes = ['restaurant','cafe','fast_food','food_court','bakery','sushi','ramen','izakaya','kaiseki'];
+  var drinkTypes = ['bar','pub','nightclub','brewery','sake'];
+  var cultureTypes = ['temple','shrine','museum','castle','historic','place_of_worship','memorial','ruins'];
+  var natureTypes = ['park','garden','forest','nature_reserve','viewpoint','waterfall','hot_spring'];
+  var artTypes = ['art_gallery','theatre','cinema','arts_centre'];
+  var shopTypes = ['marketplace','mall','supermarket','department_store'];
+  if (foodTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'food';
+  if (drinkTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'drink';
+  if (cultureTypes.some(function(t){ return type.indexOf(t)!==-1 || cls.indexOf(t)!==-1; })) return 'culture';
+  if (natureTypes.some(function(t){ return type.indexOf(t)!==-1 || cls.indexOf(t)!==-1; })) return 'nature';
+  if (artTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'art';
+  if (cls === 'shop' || shopTypes.some(function(t){ return type.indexOf(t)!==-1; })) return 'shopping';
+  return 'hidden';
+}
+
+function guessCityFromAddress(address) {
+  if (!address) return state.city !== 'all' ? state.city : 'kyoto';
+  var city = (address.city || address.town || address.county || '').toLowerCase();
+  if (city.indexOf('tokyo') !== -1) return 'tokyo';
+  if (city.indexOf('osaka') !== -1) return 'osaka';
+  if (city.indexOf('nara')  !== -1) return 'nara';
+  if (city.indexOf('kyoto') !== -1) return 'kyoto';
+  return state.city !== 'all' ? state.city : 'kyoto';
+}
+
+function doNominatimSearch(q) {
+  if (q.length < 2) {
+    document.getElementById('bap-results').innerHTML = '';
+    document.getElementById('bap-status').textContent = '';
+    return;
+  }
+  document.getElementById('bap-status').textContent = 'Searching…';
+  document.getElementById('bap-results').innerHTML = '';
+  // Bias toward Japan but don't force it (user may have typed the city already)
+  var url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
+            '&countrycodes=jp&format=json&limit=6&accept-language=en&addressdetails=1&extratags=1';
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      if (!results.length) {
+        document.getElementById('bap-status').textContent = 'No results — try adding the city name.';
+        return;
+      }
+      document.getElementById('bap-status').textContent = results.length + ' result' + (results.length !== 1 ? 's' : '') + ' — tap one to confirm';
+      document.getElementById('bap-results').innerHTML = results.map(function(r, i) {
+        var name = r.name || r.display_name.split(',')[0];
+        var addr = r.address || {};
+        var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+        var typeLabel = (r.type || r.class || '').replace(/_/g, ' ');
+        return '<div class="bap-result-item" data-idx="' + i + '">' +
+          '<div class="bap-result-name">' + name + '</div>' +
+          (addrStr ? '<div class="bap-result-addr">' + addrStr + '</div>' : '') +
+          (typeLabel ? '<span class="bap-result-type">' + typeLabel + '</span>' : '') +
+          '</div>';
+      }).join('');
+      // attach click handlers
+      document.getElementById('bap-results').querySelectorAll('.bap-result-item').forEach(function(el) {
+        el.addEventListener('click', function() {
+          selectNominatimResult(results[parseInt(el.dataset.idx)]);
+        });
+      });
+    })
+    .catch(function() {
+      document.getElementById('bap-status').textContent = 'Search failed — check your connection.';
+    });
+}
+
+function selectNominatimResult(result) {
+  bapSelectedPlace = result;
+  var addr = result.address || {};
+  var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+  var name = result.name || result.display_name.split(',')[0];
+  var typeLabel = (result.type || result.class || '').replace(/_/g, ' ');
+  // Build confirm card
+  document.getElementById('bap-confirm-card').innerHTML =
+    '<strong>' + name + '</strong>' +
+    '<span>' + [addrStr, typeLabel].filter(Boolean).join(' · ') + '</span>';
+  // Pre-fill editable fields
+  document.getElementById('bap-name').value = name;
+  document.getElementById('bap-cat').value = guessCatFromNominatim(result);
+  document.getElementById('bap-price').value = 'Free';
+  // Switch to confirm view
+  document.getElementById('bap-search-view').style.display = 'none';
+  document.getElementById('bap-confirm-view').style.display = '';
+}
+
+function saveBrowsePlace() {
+  if (!bapSelectedPlace) return;
+  var name = document.getElementById('bap-name').value.trim();
+  if (!name) { alert('Please enter a name.'); return; }
+  var catIcons = { food:'🍜', drink:'🍸', culture:'⛩️', shopping:'🏮', art:'🎨', nature:'🌿', hidden:'🔮' };
+  var cat  = document.getElementById('bap-cat').value;
+  var addr = bapSelectedPlace.address || {};
+  var addrStr = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+  var newPlace = {
+    id:        Date.now(),
+    lat:       parseFloat(bapSelectedPlace.lat),
+    lng:       parseFloat(bapSelectedPlace.lon),
+    city:      guessCityFromAddress(addr),
+    cat:       cat,
+    saved:     true,
+    userAdded: true,
+    name:      name,
+    jp:        '',
+    desc:      addrStr || 'Added by you.',
+    tips:      [],
+    dist: '—', walk: '—',
+    price:     document.getElementById('bap-price').value,
+    icon:      catIcons[cat] || '📍',
+    note: '', visited: false
+  };
+  places.push(newPlace);
+  var stored = lsGet(LS_KEY_CUSTOM, []);
+  stored.push(newPlace);
+  lsSet(LS_KEY_CUSTOM, stored);
+  closeBrowseAddSheet();
+  renderCards();
+  if (mapInstance) renderMapPins();
+  var msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;white-space:nowrap;';
+  msg.textContent = '✓ ' + name + ' added to your places';
+  document.body.appendChild(msg);
+  setTimeout(function(){ if (msg.parentNode) document.body.removeChild(msg); }, 2500);
+}
+
+// ── TILE TOGGLE ──
+function toggleEnglishTiles() {
+  mapTileEN = !mapTileEN;
+  document.getElementById('btn-toggle-en').classList.toggle('en-active', mapTileEN);
+  if (mapInstance && mapTileLayer) {
+    mapInstance.removeLayer(mapTileLayer);
+    mapTileLayer = L.tileLayer(mapTileEN ? TILE_CARTO : TILE_OSM, {
+      attribution: mapTileEN ? ATTR_CARTO : ATTR_OSM,
+      maxZoom: 19
+    }).addTo(mapInstance);
+  }
+}
+
+// ── ADD PLACE ──
+function startAddPlaceMode() {
+  addingPlace = true;
+  document.getElementById('map-container').classList.add('pick-mode');
+  document.getElementById('add-place-banner').classList.add('active');
+  document.getElementById('btn-add-place').textContent = '✕ Cancel';
+}
+
+function stopAddPlaceMode() {
+  addingPlace = false;
+  document.getElementById('map-container').classList.remove('pick-mode');
+  document.getElementById('add-place-banner').classList.remove('active');
+  document.getElementById('btn-add-place').textContent = '＋ Add place';
+}
+
+function prefillAddPlaceForm(lat, lng) {
+  var cityEl = document.getElementById('ap-city');
+  if (cityEl && state.city !== 'all') cityEl.value = state.city;
+  document.getElementById('ap-name').value = '';
+  document.getElementById('ap-jp').value   = '';
+  document.getElementById('ap-desc').value = '';
+  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=en')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var name = '';
+      if (data.address) {
+        name = data.address.amenity || data.address.shop || data.address.tourism ||
+               data.address.building || data.address.road || '';
+      }
+      if (!name && data.name) name = data.name;
+      document.getElementById('ap-name').value = name;
+    })
+    .catch(function() {});
+  document.getElementById('add-place-sheet').classList.add('active');
+}
+
+function cancelAddPlace() {
+  document.getElementById('add-place-sheet').classList.remove('active');
+  stopAddPlaceMode();
+  addPlaceLatLng = null;
+}
+
+function saveCustomPlace() {
+  var name = document.getElementById('ap-name').value.trim();
+  if (!name) { alert('Please enter a name for this place.'); return; }
+  if (!addPlaceLatLng) { cancelAddPlace(); return; }
+  var catIcons = { food:'🍜', drink:'🍸', culture:'⛩️', shopping:'🏮', art:'🎨', nature:'🌿', hidden:'🔮' };
+  var cat = document.getElementById('ap-cat').value;
+  var newPlace = {
+    id:        Date.now(),
+    lat:       addPlaceLatLng.lat,
+    lng:       addPlaceLatLng.lng,
+    city:      document.getElementById('ap-city').value,
+    cat:       cat,
+    saved:     true,
+    userAdded: true,
+    name:      name,
+    jp:        document.getElementById('ap-jp').value.trim() || '',
+    desc:      document.getElementById('ap-desc').value.trim() || 'Added by you.',
+    tips:      [],
+    dist: '—', walk: '—',
+    price:     document.getElementById('ap-price').value,
+    icon:      catIcons[cat] || '📍',
+    note: '', visited: false
+  };
+  places.push(newPlace);
+  var stored = lsGet(LS_KEY_CUSTOM, []);
+  stored.push(newPlace);
+  lsSet(LS_KEY_CUSTOM, stored);
+  cancelAddPlace();
+  renderCards();
+  if (mapInstance) renderMapPins();
+  var msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;white-space:nowrap;';
+  msg.textContent = '✓ ' + name + ' added';
+  document.body.appendChild(msg);
+  setTimeout(function(){ if (msg.parentNode) document.body.removeChild(msg); }, 2500);
+}
+
+function deleteCustomPlace(id) {
+  if (!confirm('Remove this place from your list?')) return;
+  places = places.filter(function(p) { return p.id !== id; });
+  var stored = lsGet(LS_KEY_CUSTOM, []).filter(function(p) { return p.id !== id; });
+  lsSet(LS_KEY_CUSTOM, stored);
+  closePanel();
+  renderCards();
+  if (mapInstance) renderMapPins();
+}
+window._deleteCustomPlace = deleteCustomPlace;
 
 // ── EVENT LISTENERS ──
 // City tabs
@@ -1894,6 +2853,36 @@ document.querySelectorAll('.map-cat-pill').forEach(function(p) { p.classList.rem
 pill.classList.add('active');
 renderMapPins();
 });
+
+// EN tile toggle
+document.getElementById('btn-toggle-en').addEventListener('click', toggleEnglishTiles);
+
+// Browse add place
+document.getElementById('btn-browse-add').addEventListener('click', openBrowseAddSheet);
+document.getElementById('bap-close').addEventListener('click', closeBrowseAddSheet);
+document.getElementById('bap-close2').addEventListener('click', closeBrowseAddSheet);
+document.getElementById('bap-back').addEventListener('click', function() {
+  document.getElementById('bap-search-view').style.display = '';
+  document.getElementById('bap-confirm-view').style.display = 'none';
+  bapSelectedPlace = null;
+});
+document.getElementById('browse-add-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeBrowseAddSheet();
+});
+document.getElementById('bap-input').addEventListener('input', function() {
+  var q = this.value.trim();
+  if (bapSearchTimer) clearTimeout(bapSearchTimer);
+  bapSearchTimer = setTimeout(function() { doNominatimSearch(q); }, 450);
+});
+document.getElementById('bap-btn-save').addEventListener('click', saveBrowsePlace);
+document.getElementById('bap-btn-cancel').addEventListener('click', closeBrowseAddSheet);
+
+// Add place buttons
+document.getElementById('btn-add-place').addEventListener('click', function() {
+  if (addingPlace) { stopAddPlaceMode(); } else { startAddPlaceMode(); }
+});
+document.getElementById('btn-save-place').addEventListener('click', saveCustomPlace);
+document.getElementById('btn-cancel-place').addEventListener('click', cancelAddPlace);
 
 // City tab changes should also update map if open
 var origCityHandler = document.getElementById('city-tabs').onclick;
