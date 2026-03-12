@@ -536,7 +536,7 @@ background: var(--paper);
 border-top: 1px solid var(--border);
 display: flex;
 padding: 8px 0 max(env(safe-area-inset-bottom, 0px) + 8px, 16px);
-z-index: 100;
+z-index: 110;
 }
 
 .nav-item {
@@ -768,7 +768,7 @@ position: fixed;
 top: 0; left: 50%; transform: translateX(-50%);
 width: 100%; max-width: 430px;
 height: 100vh;
-z-index: 50;
+z-index: 105;
 flex-direction: column;
 }
 
@@ -887,6 +887,36 @@ body.map-open { overflow: hidden; }
   white-space: nowrap;
 }
 .map-action-btn.en-active { background: #2d6a4f; color: white; }
+.map-action-btn.locate-active { background: #1a73e8; color: white; }
+
+/* Map city switcher strip */
+.map-city-strip {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  pointer-events: all;
+  margin-bottom: 7px;
+}
+.map-city-strip::-webkit-scrollbar { display: none; }
+.map-city-pill {
+  flex-shrink: 0;
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.18);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+.map-city-pill.active {
+  background: var(--ink);
+  color: var(--paper);
+}
 
 /* Add-place banner */
 .add-place-banner {
@@ -1066,10 +1096,18 @@ body.map-open { overflow: hidden; }
 <div class="map-view" id="map-view">
   <div class="map-header">
     <div class="map-action-row">
-      <button class="map-action-btn" id="btn-toggle-en">🌐 EN</button>
+      <button class="map-action-btn en-active" id="btn-toggle-en">🌐 EN</button>
+      <button class="map-action-btn" id="btn-locate">📍 Locate me</button>
       <button class="map-action-btn" id="btn-add-place">＋ Add place</button>
     </div>
     <div class="add-place-banner" id="add-place-banner">Tap anywhere on the map to drop a pin</div>
+    <div class="map-city-strip" id="map-city-strip">
+      <button class="map-city-pill" data-city="tokyo">Tokyo</button>
+      <button class="map-city-pill active" data-city="kyoto">Kyoto</button>
+      <button class="map-city-pill" data-city="osaka">Osaka</button>
+      <button class="map-city-pill" data-city="nara">Nara</button>
+      <button class="map-city-pill" data-city="all">All</button>
+    </div>
     <div class="map-cat-strip" id="map-cat-strip">
       <button class="map-cat-pill active" data-cat="all">✦ All</button>
       <button class="map-cat-pill" data-cat="food">🍜 Food</button>
@@ -2071,9 +2109,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     setLocStatus('Locating…', 'var(--muted)');
     navigator.geolocation.getCurrentPosition(function(pos) {
-      updateDistances(pos.coords.latitude, pos.coords.longitude);
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+      updateDistances(userLat, userLng);
       setLocStatus('Live distances', 'var(--accent)');
       renderCards();
+      if (mapInstance) showUserLocation(userLat, userLng);
     }, function() {
       setLocStatus('');
       renderCards();
@@ -2091,8 +2132,10 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapInstance = null;
   var mapMarkers  = [];
   var mapCat      = 'all';
-  var mapTileEN   = false;
+  var mapTileEN   = true;
   var mapTileLayer = null;
+  var userMarker  = null;
+  var userLat = null, userLng = null;
   var TILE_OSM    = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   var TILE_CARTO  = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
   var ATTR_OSM    = '© OpenStreetMap contributors';
@@ -2116,6 +2159,51 @@ document.addEventListener("DOMContentLoaded", function() {
       '<circle cx="14" cy="14" r="6" fill="rgba(255,255,255,0.9)"/>' +
       check +
       '</svg>';
+  }
+
+  function showUserLocation(lat, lng) {
+    if (!mapInstance) return;
+    if (userMarker) mapInstance.removeLayer(userMarker);
+    userMarker = L.circleMarker([lat, lng], {
+      radius: 9,
+      fillColor: '#1a73e8',
+      fillOpacity: 1,
+      color: 'white',
+      weight: 3,
+      pane: 'shadowPane'
+    }).addTo(mapInstance);
+    // Outer ring for GPS accuracy feel
+    L.circleMarker([lat, lng], {
+      radius: 16,
+      fillColor: '#1a73e8',
+      fillOpacity: 0.15,
+      color: '#1a73e8',
+      weight: 1
+    }).addTo(mapInstance);
+  }
+
+  function locateUser() {
+    if (!mapInstance || !navigator.geolocation) return;
+    var btn = document.getElementById('btn-locate');
+    if (btn) btn.textContent = '⌛ Locating…';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+      showUserLocation(userLat, userLng);
+      updateDistances(userLat, userLng);
+      renderCards();
+      setLocStatus('Live distances', 'var(--accent)');
+      mapInstance.flyTo([userLat, userLng], 15, { duration: 1 });
+      if (btn) { btn.textContent = '📍 Located'; btn.classList.add('locate-active'); }
+    }, function() {
+      if (btn) btn.textContent = '📍 Locate me';
+    }, { enableHighAccuracy: true, timeout: 12000 });
+  }
+
+  function updateMapCityStrip() {
+    document.querySelectorAll('.map-city-pill').forEach(function(p) {
+      p.classList.toggle('active', p.dataset.city === state.city);
+    });
   }
 
   function initMap() {
@@ -2177,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function showMapView() {
     document.getElementById('map-view').classList.add('active');
     document.body.classList.add('map-open');
+    updateMapCityStrip();
     // Leaflet needs the container visible before init
     setTimeout(function() {
       initMap();
@@ -2185,6 +2274,8 @@ document.addEventListener("DOMContentLoaded", function() {
       mapInstance.setView(centre, 14);
       renderMapPins();
       mapInstance.invalidateSize();
+      // Restore user location dot if we already have coordinates
+      if (userLat !== null) showUserLocation(userLat, userLng);
     }, 50);
   }
 
@@ -2956,6 +3047,7 @@ if (!tab) return;
 state.city = tab.dataset.city;
 document.querySelectorAll('.city-tab').forEach(function(t) { t.classList.remove('active'); });
 tab.classList.add('active');
+updateMapCityStrip();
 var titleEl = document.getElementById('section-title');
 if (titleEl) titleEl.textContent = state.city === 'all' ? 'All Cities' : state.city.charAt(0).toUpperCase() + state.city.slice(1);
 renderCards();
@@ -3106,6 +3198,25 @@ else if (tab === 'saved') { hideMapView();
 }
 
 });
+
+// Map city strip
+document.getElementById('map-city-strip').addEventListener('click', function(e) {
+  var pill = e.target.closest('.map-city-pill');
+  if (!pill) return;
+  state.city = pill.dataset.city;
+  updateMapCityStrip();
+  // sync main city tabs too
+  document.querySelectorAll('.city-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.city === state.city); });
+  var titleEl = document.getElementById('section-title');
+  if (titleEl) titleEl.textContent = state.city === 'all' ? 'All Cities' : state.city.charAt(0).toUpperCase() + state.city.slice(1);
+  if (mapInstance) {
+    mapInstance.flyTo(mapCityCentres[state.city] || mapCityCentres.kyoto, 14, { duration: 1 });
+    renderMapPins();
+  }
+});
+
+// Locate button
+document.getElementById('btn-locate').addEventListener('click', locateUser);
 
 // Visit filter strip
 document.getElementById('visit-filter-strip').addEventListener('click', function(e) {
